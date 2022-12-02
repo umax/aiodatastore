@@ -11,8 +11,8 @@ from aiodatastore.constants import (
 )
 from aiodatastore.filters import CompositeFilter, PropertyFilter
 from aiodatastore.key import PartitionId, PathElement, Key
-from aiodatastore.property import PropertyReference
-from aiodatastore.query import Query
+from aiodatastore.property import PropertyOrder, PropertyReference
+from aiodatastore.query import Projection, KindExpression, Query
 from aiodatastore.result import QueryResultBatch
 from aiodatastore.values import (
     NullValue,

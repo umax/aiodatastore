@@ -67,8 +67,9 @@ class TestQuery(unittest.TestCase):
         q = Query()
         assert q.to_ds()["kind"] == []
 
-        q = Query(kind="kind1")
-        assert q.to_ds()["kind"] == [{"name": "kind1"}]
+        kind = KindExpression("kind1")
+        q = Query(kind=kind)
+        assert q.to_ds()["kind"] == [kind.to_ds()]
 
     def test__to_ds__filter(self):
         q = Query()

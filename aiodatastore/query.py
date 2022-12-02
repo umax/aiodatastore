@@ -59,7 +59,7 @@ class Query:
         if self.projection:
             data["projection"] = [p.to_ds() for p in self.projection]
         if self.kind:
-            data["kind"] = [{"name": self.kind}]
+            data["kind"] = [self.kind.to_ds()]
         if self.filter:
             data["filter"] = self.filter.to_ds()
         if self.order:
