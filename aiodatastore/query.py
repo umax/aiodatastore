@@ -7,6 +7,7 @@ from aiodatastore.values import Value
 
 __all__ = (
     "Projection",
+    "KindExpression",
     "Query",
     "GqlQueryParameter",
     "GQLQuery",
@@ -26,14 +27,27 @@ class Projection:
         return {"property": self.property.to_ds()}
 
 
+# https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/runQuery#KindExpression
+@dataclass
+class KindExpression:
+    name: str
+
+    @classmethod
+    def from_ds(cls, data: Dict[str, Any]) -> "KindExpression":
+        return cls(data["name"])
+
+    def to_ds(self) -> Dict[str, Any]:
+        return {"name": self.name}
+
+
 # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/runQuery#Query
 @dataclass
 class Query:
     projection: Optional[List[Projection]] = None
-    kind: str = ""
+    kind: Optional[KindExpression] = None
     filter: Optional[Union[CompositeFilter, PropertyFilter]] = None
     order: Optional[List[PropertyOrder]] = None
-    distinct_on: Optional[List[str]] = None
+    distinct_on: Optional[List[PropertyReference]] = None
     start_cursor: str = ""
     end_cursor: str = ""
     offset: Optional[int] = None
@@ -51,7 +65,7 @@ class Query:
         if self.order:
             data["order"] = [o.to_ds() for o in self.order]
         if self.distinct_on:
-            data["distinctOn"] = [{"name": d} for d in self.distinct_on]
+            data["distinctOn"] = [d.to_ds() for d in self.distinct_on]
         if self.start_cursor:
             data["startCursor"] = self.start_cursor
         if self.end_cursor:

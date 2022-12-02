@@ -7,6 +7,7 @@ from aiodatastore.property import PropertyReference, PropertyOrder
 class TestPropertyReference(unittest.TestCase):
     def test__from_ds(self):
         pr = PropertyReference.from_ds({"name": "name1"})
+        assert isinstance(pr, PropertyReference)
         assert pr.name == "name1"
 
     def test__to_ds(self):
@@ -28,6 +29,7 @@ class TestPropertyOrder(unittest.TestCase):
                 "direction": "DESCENDING",
             }
         )
+        assert isinstance(po, PropertyOrder)
         assert po.property == PropertyReference("property1")
         assert po.direction == Direction.DESCENDING
 

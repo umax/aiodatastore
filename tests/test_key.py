@@ -10,6 +10,7 @@ class TestPartitionId(unittest.TestCase):
                 "projectId": "project1",
             }
         )
+        assert isinstance(p, PartitionId)
         assert p.project_id == "project1"
         assert p.namespace_id is None
 
@@ -51,6 +52,7 @@ class TestPathElement(unittest.TestCase):
                 "kind": "kind1",
             }
         )
+        assert isinstance(pe, PathElement)
         assert pe.kind == "kind1"
         assert pe.id is None
         assert pe.name is None
@@ -120,6 +122,7 @@ class TestKey:
                 ],
             }
         )
+        assert isinstance(key, Key)
 
         partition = key.partition_id
         assert isinstance(partition, PartitionId)
