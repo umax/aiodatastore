@@ -19,7 +19,7 @@ class PartitionId:
     def from_ds(cls, data: Dict[str, Any]) -> "PartitionId":
         return cls(data["projectId"], namespace_id=data.get("namespaceId"))
 
-    def to_ds(self):
+    def to_ds(self) -> Dict[str, str]:
         data = {"projectId": self.project_id}
         if self.namespace_id is not None:
             data["namespaceId"] = self.namespace_id

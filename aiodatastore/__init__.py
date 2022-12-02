@@ -14,6 +14,7 @@ from aiodatastore.key import PartitionId, PathElement, Key
 from aiodatastore.property import PropertyOrder, PropertyReference
 from aiodatastore.query import Projection, KindExpression, Query
 from aiodatastore.result import QueryResultBatch
+from aiodatastore.transaction import ReadOnlyOptions, ReadWriteOptions
 from aiodatastore.values import (
     NullValue,
     BooleanValue,

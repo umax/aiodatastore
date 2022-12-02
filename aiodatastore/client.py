@@ -6,6 +6,7 @@ from gcloud.aio.auth import AioSession, Token
 from aiodatastore.constants import ReadConsistency
 from aiodatastore.query import GQLQuery, Query
 from aiodatastore.result import QueryResultBatch
+from aiodatastore.transaction import ReadOnlyOptions, ReadWriteOptions
 
 __all__ = ("Datastore",)
 
@@ -46,7 +47,10 @@ class Datastore:
         if not self._project_id:
             raise RuntimeError("project id not set")
 
-        self.run_query_url = API_URL + f"/projects/{self._project_id}:runQuery"
+        self.run_query_url = f"{API_URL}/projects/{self._project_id}:runQuery"
+        self.begin_transaction_url = (
+            f"{API_URL}/projects/{self._project_id}:beginTransaction"
+        )
 
     def _get_project_id(self):
         return os.environ.get(
@@ -72,6 +76,25 @@ class Datastore:
         token = await self._token.get()
         return {"Authorization": f"Bearer {token}"}
 
+    async def begin_transaction(
+        self,
+        opts: Optional[Union[ReadOnlyOptions, ReadWriteOptions]] = None,
+    ) -> str:
+        headers = await self._get_headers()
+
+        req_data = {}
+        if opts is not None:
+            req_data = opts.to_ds()
+
+        resp = await self._session.request(
+            "POST",
+            self.begin_transaction_url,
+            headers=headers,
+            json=req_data,
+        )
+        resp_data = await resp.json()
+        return resp_data["transaction"]
+
     async def run_query(
         self,
         query: Union[Query, GQLQuery],
@@ -79,6 +102,7 @@ class Datastore:
         transaction=None,
     ) -> QueryResultBatch:
         headers = await self._get_headers()
+
         req_data = {
             "partitionId": self._get_partition_id(),
             "readOptions": self._get_read_options(read_opts, transaction),
@@ -88,7 +112,7 @@ class Datastore:
         elif isinstance(query, GQLQuery):
             req_data["gqlQuery"] = query.to_ds()
         else:
-            raise RuntimeError(f'unsupported query type: {query}')
+            raise RuntimeError(f"unsupported query type: {query}")
 
         resp = await self._session.request(
             "POST",
