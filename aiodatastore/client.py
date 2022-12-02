@@ -47,11 +47,6 @@ class Datastore:
         if not self._project_id:
             raise RuntimeError("project id not set")
 
-        self.run_query_url = f"{API_URL}/projects/{self._project_id}:runQuery"
-        self.begin_transaction_url = (
-            f"{API_URL}/projects/{self._project_id}:beginTransaction"
-        )
-
     def _get_project_id(self):
         return os.environ.get(
             "DATASTORE_PROJECT_ID", os.environ.get("GOOGLE_CLOUD_PROJECT")
@@ -88,7 +83,7 @@ class Datastore:
 
         resp = await self._session.request(
             "POST",
-            self.begin_transaction_url,
+            f"{API_URL}/projects/{self._project_id}:beginTransaction",
             headers=headers,
             json=req_data,
         )
@@ -116,7 +111,7 @@ class Datastore:
 
         resp = await self._session.request(
             "POST",
-            self.run_query_url,
+            f"{API_URL}/projects/{self._project_id}:runQuery",
             headers,
             json=req_data,
         )
