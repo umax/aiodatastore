@@ -94,6 +94,22 @@ class Datastore:
         resp_data = await resp.json()
         return [Key.from_ds(key) for key in resp_data["keys"]]
 
+    # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/reserveIds
+    async def reserve_ids(self, keys: List[Key], database_id: str = ""):
+        headers = await self._get_headers()
+        req_data = {
+            "databaseId": database_id,
+            "keys": [key.to_ds() for key in keys],
+        }
+
+        resp = await self._session.request(
+            "POST",
+            f"{API_URL}/projects/{self._project_id}:reserveIds",
+            headers=headers,
+            json=req_data,
+        )
+        print(resp.status)
+
     # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/beginTransaction
     async def begin_transaction(
         self,
