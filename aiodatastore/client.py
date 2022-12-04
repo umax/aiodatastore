@@ -99,17 +99,19 @@ class Datastore:
     async def commit(
         self,
         mutations: List[Mutation],
-        transaction_id: str,
+        transaction_id: Optional[str] = None,
         mode: Optional[Mode] = None,
     ) -> CommitResult:
         headers = await self._get_headers()
-        if transaction_id is None:
-            transaction_id = await self.begin_transaction()
+        mode = mode or Mode.TRANSACTIONAL
+
         req_data = {
-            "mode": (mode or Mode.TRANSACTIONAL).value,
+            "mode": mode.value,
             "mutations": [mut.to_ds() for mut in mutations],
-            "transaction": transaction_id,
         }
+        if mode == Mode.TRANSACTIONAL and transaction_id is None:
+            transaction_id = await self.begin_transaction()
+            req_data["transaction"] = transaction_id
 
         resp = await self._session.request(
             "POST",
