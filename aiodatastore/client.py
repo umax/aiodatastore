@@ -80,6 +80,20 @@ class Datastore:
         token = await self._token.get()
         return {"Authorization": f"Bearer {token}"}
 
+    # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/allocateIds
+    async def allocate_ids(self, keys: List[Key]) -> List[Key]:
+        headers = await self._get_headers()
+        req_data = {"keys": [key.to_ds() for key in keys]}
+
+        resp = await self._session.request(
+            "POST",
+            f"{API_URL}/projects/{self._project_id}:allocateIds",
+            headers=headers,
+            json=req_data,
+        )
+        resp_data = await resp.json()
+        return [Key.from_ds(key) for key in resp_data["keys"]]
+
     # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/beginTransaction
     async def begin_transaction(
         self,
