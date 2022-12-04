@@ -7,7 +7,13 @@ from aiodatastore.commit import CommitResult
 from aiodatastore.constants import Mode, ReadConsistency
 from aiodatastore.entity import Entity
 from aiodatastore.key import Key
-from aiodatastore.mutation import Mutation, DeleteMutation
+from aiodatastore.mutation import (
+    Mutation,
+    InsertMutation,
+    UpsertMutation,
+    UpdateMutation,
+    DeleteMutation,
+)
 from aiodatastore.query import GQLQuery, Query, QueryResultBatch
 from aiodatastore.transaction import ReadOnlyOptions, ReadWriteOptions
 
@@ -92,7 +98,6 @@ class Datastore:
             json=req_data,
         )
         resp_data = await resp.json()
-        print("[begin_transaction][result]", resp_data)
         return resp_data["transaction"]
 
     # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/commit
@@ -120,8 +125,27 @@ class Datastore:
             json=req_data,
         )
         resp_data = await resp.json()
-        print("[commit][result]", resp_data)
         return CommitResult.from_ds(resp_data)
+
+    async def insert(self, entity: Entity) -> CommitResult:
+        mutation = InsertMutation(entity=entity)
+        return await self.commit([mutation])
+
+    async def upsert(self, entity: Entity) -> CommitResult:
+        mutation = UpsertMutation(entity=entity)
+        return await self.commit([mutation])
+
+    async def update(self, entity: Entity) -> CommitResult:
+        mutation = UpdateMutation(entity=entity)
+        return await self.commit([mutation])
+
+    async def delete(
+        self,
+        key: Optional[Key] = None,
+        entity: Optional[Entity] = None,
+    ) -> CommitResult:
+        mutation = DeleteMutation(key=key or entity.key)
+        return await self.commit([mutation])
 
     # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/runQuery
     async def run_query(
@@ -151,19 +175,6 @@ class Datastore:
         )
         resp_data = await resp.json()
         return QueryResultBatch.from_ds(resp_data["batch"])
-
-    async def delete(
-        self,
-        key: Optional[Key] = None,
-        entity: Optional[Entity] = None,
-        mode: Optional[Mode] = None,
-        transaction_id: Optional[str] = None,
-    ) -> CommitResult:
-        if key is None:
-            key = entity.key
-
-        mutation = DeleteMutation(key)
-        return await self.commit([mutation], mode=mode, transaction_id=transaction_id)
 
     async def close(self):
         await self._session.close()

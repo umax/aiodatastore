@@ -10,6 +10,7 @@ from aiodatastore.constants import (
     ResultType,
     MoreResultsType,
 )
+from aiodatastore.entity import Entity
 from aiodatastore.filters import CompositeFilter, PropertyFilter
 from aiodatastore.key import PartitionId, PathElement, Key
 from aiodatastore.property import PropertyOrder, PropertyReference
