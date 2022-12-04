@@ -1,6 +1,6 @@
-from aiodatastore.client import Datastore
-from aiodatastore.commit import CommitResult, MutationResult
-from aiodatastore.constants import (
+from aiodatastore.client import Datastore  # noqa
+from aiodatastore.commit import CommitResult, MutationResult  # noqa
+from aiodatastore.constants import (  # noqa
     CompositeFilterOperator,
     PropertyFilterOperator,
     Direction,
@@ -10,13 +10,13 @@ from aiodatastore.constants import (
     ResultType,
     MoreResultsType,
 )
-from aiodatastore.entity import Entity
-from aiodatastore.filters import CompositeFilter, PropertyFilter
-from aiodatastore.key import PartitionId, PathElement, Key
-from aiodatastore.property import PropertyOrder, PropertyReference
-from aiodatastore.query import Projection, KindExpression, Query, QueryResultBatch
-from aiodatastore.transaction import ReadOnlyOptions, ReadWriteOptions
-from aiodatastore.values import (
+from aiodatastore.entity import Entity  # noqa
+from aiodatastore.filters import CompositeFilter, PropertyFilter  # noqa
+from aiodatastore.key import PartitionId, PathElement, Key  # noqa
+from aiodatastore.property import PropertyOrder, PropertyReference  # noqa
+from aiodatastore.query import Projection, KindExpression, Query, QueryResultBatch  # noqa
+from aiodatastore.transaction import ReadOnlyOptions, ReadWriteOptions  # noqa
+from aiodatastore.values import (  # noqa
     NullValue,
     BooleanValue,
     StringValue,

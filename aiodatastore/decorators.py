@@ -2,7 +2,7 @@ import dataclasses
 import sys
 from functools import partial
 
-__all__ = ("datacalss",)
+__all__ = ("dataclass",)
 
 
 dataclass = dataclasses.dataclass
