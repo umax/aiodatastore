@@ -434,17 +434,17 @@ class TestArrayValue(unittest.TestCase):
         el1 = value[0]
         assert el1.raw_value == "NULL_VALUE"
         assert el1.py_value is None
-        assert el1.indexed == False
+        assert el1.indexed is False
 
         el2 = value[1]
         assert el2.raw_value == "string1"
         assert el2.py_value is None
-        assert el2.indexed == False
+        assert el2.indexed is False
 
         el3 = value[2]
-        assert el3.raw_value == False
+        assert el3.raw_value is False
         assert el3.py_value is None
-        assert el3.indexed == True
+        assert el3.indexed is True
 
     def test__py_to_raw(self):
         el1 = NullValue(indexed=True)

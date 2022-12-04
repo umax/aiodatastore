@@ -33,8 +33,10 @@ class Entity:
                 indexed=not prop_value.get("excludeFromIndexes"),
             )
 
-        key = Key.from_ds(data.get("key"))
-        return cls(key, properties)
+        return cls(
+            key=Key.from_ds(data.get("key")),
+            properties=properties,
+        )
 
     def to_ds(self) -> Dict[str, Any]:
         return {
@@ -52,8 +54,11 @@ class EntityResult:
 
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "EntityResult":
-        entity = Entity.from_ds(data["entity"])
-        return cls(entity, data.get("version", ""), data.get("cursor", ""))
+        return cls(
+            entity=Entity.from_ds(data["entity"]),
+            version=data.get("version", ""),
+            cursor=data.get("cursor", ""),
+        )
 
     def to_ds(self) -> Dict[str, Any]:
         return {

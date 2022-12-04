@@ -1,11 +1,14 @@
 import io
 import os
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 from gcloud.aio.auth import AioSession, Token
-from aiodatastore.constants import ReadConsistency
-from aiodatastore.query import GQLQuery, Query
-from aiodatastore.result import QueryResultBatch
+from aiodatastore.commit import CommitResult
+from aiodatastore.constants import Mode, ReadConsistency
+from aiodatastore.entity import Entity
+from aiodatastore.key import Key
+from aiodatastore.mutation import Mutation, DeleteMutation
+from aiodatastore.query import GQLQuery, Query, QueryResultBatch
 from aiodatastore.transaction import ReadOnlyOptions, ReadWriteOptions
 
 __all__ = ("Datastore",)
@@ -52,9 +55,9 @@ class Datastore:
             "DATASTORE_PROJECT_ID", os.environ.get("GOOGLE_CLOUD_PROJECT")
         )
 
-    def _get_read_options(self, consistency, transaction):
-        if transaction is not None:
-            return {"transaction": transaction}
+    def _get_read_options(self, consistency: ReadConsistency, transaction_id: str):
+        if transaction_id is not None:
+            return {"transaction": transaction_id}
         else:
             return {"readConsistency": consistency.value}
 
@@ -71,6 +74,7 @@ class Datastore:
         token = await self._token.get()
         return {"Authorization": f"Bearer {token}"}
 
+    # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/beginTransaction
     async def begin_transaction(
         self,
         opts: Optional[Union[ReadOnlyOptions, ReadWriteOptions]] = None,
@@ -88,19 +92,47 @@ class Datastore:
             json=req_data,
         )
         resp_data = await resp.json()
+        print("[begin_transaction][result]", resp_data)
         return resp_data["transaction"]
 
+    # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/commit
+    async def commit(
+        self,
+        mutations: List[Mutation],
+        transaction_id: str,
+        mode: Optional[Mode] = None,
+    ) -> CommitResult:
+        headers = await self._get_headers()
+        if transaction_id is None:
+            transaction_id = await self.begin_transaction()
+        req_data = {
+            "mode": (mode or Mode.TRANSACTIONAL).value,
+            "mutations": [mut.to_ds() for mut in mutations],
+            "transaction": transaction_id,
+        }
+
+        resp = await self._session.request(
+            "POST",
+            f"{API_URL}/projects/{self._project_id}:commit",
+            headers=headers,
+            json=req_data,
+        )
+        resp_data = await resp.json()
+        print("[commit][result]", resp_data)
+        return CommitResult.from_ds(resp_data)
+
+    # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/runQuery
     async def run_query(
         self,
         query: Union[Query, GQLQuery],
         read_opts=ReadConsistency.EVENTUAL,
-        transaction=None,
+        transaction_id: Optional[str] = None,
     ) -> QueryResultBatch:
         headers = await self._get_headers()
 
         req_data = {
             "partitionId": self._get_partition_id(),
-            "readOptions": self._get_read_options(read_opts, transaction),
+            "readOptions": self._get_read_options(read_opts, transaction_id),
         }
         if isinstance(query, Query):
             req_data["query"] = query.to_ds()
@@ -117,6 +149,19 @@ class Datastore:
         )
         resp_data = await resp.json()
         return QueryResultBatch.from_ds(resp_data["batch"])
+
+    async def delete(
+        self,
+        key: Optional[Key] = None,
+        entity: Optional[Entity] = None,
+        mode: Optional[Mode] = None,
+        transaction_id: Optional[str] = None,
+    ) -> CommitResult:
+        if key is None:
+            key = entity.key
+
+        mutation = DeleteMutation(key)
+        return await self.commit([mutation], mode=mode, transaction_id=transaction_id)
 
     async def close(self):
         await self._session.close()

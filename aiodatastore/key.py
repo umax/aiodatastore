@@ -36,7 +36,11 @@ class PathElement:
 
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "PathElement":
-        return cls(data["kind"], id=data.get("id"), name=data.get("name"))
+        return cls(
+            kind=data["kind"],
+            id=data.get("id"),
+            name=data.get("name"),
+        )
 
     def to_ds(self) -> Dict[str, str]:
         data = {"kind": self.kind}
@@ -56,9 +60,10 @@ class Key:
 
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "Key":
-        prtition_id = PartitionId.from_ds(data["partitionId"])
-        path = [PathElement.from_ds(path) for path in data["path"]]
-        return cls(prtition_id, path)
+        return cls(
+            partition_id=PartitionId.from_ds(data["partitionId"]),
+            path=[PathElement.from_ds(path) for path in data["path"]],
+        )
 
     def to_ds(self) -> Dict[str, Any]:
         return {
