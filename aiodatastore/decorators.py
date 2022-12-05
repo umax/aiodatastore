@@ -7,4 +7,4 @@ __all__ = ("dataclass",)
 
 dataclass = dataclasses.dataclass
 if sys.version_info[1] >= 10:
-    dataclass = partial(slots=True)
+    dataclass = partial(dataclass, slots=True)
