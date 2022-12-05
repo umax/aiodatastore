@@ -185,14 +185,14 @@ class Datastore:
     async def run_query(
         self,
         query: Union[Query, GQLQuery],
-        read_opts=ReadConsistency.EVENTUAL,
+        consistency: ReadConsistency = ReadConsistency.EVENTUAL,
         transaction_id: Optional[str] = None,
     ) -> QueryResultBatch:
         headers = await self._get_headers()
 
         req_data = {
             "partitionId": self._get_partition_id(),
-            "readOptions": self._get_read_options(read_opts, transaction_id),
+            "readOptions": self._get_read_options(consistency, transaction_id),
         }
         if isinstance(query, Query):
             req_data["query"] = query.to_ds()
