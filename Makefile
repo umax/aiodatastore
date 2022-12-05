@@ -4,7 +4,7 @@ init:
 	pip install -r requirements.txt
 
 black:
-	black aiodatastore tests
+	black --line-length=79 -t py38 -t py39 -t py310 -t py311 aiodatastore tests
 
 flake8:
 	flake8 aiodatastore tests

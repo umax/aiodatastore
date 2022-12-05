@@ -1,6 +1,12 @@
 import unittest
 
-from aiodatastore import CommitResult, Key, MutationResult, PathElement, PartitionId
+from aiodatastore import (
+    CommitResult,
+    Key,
+    MutationResult,
+    PathElement,
+    PartitionId,
+)
 
 
 class TestMutationResult(unittest.TestCase):

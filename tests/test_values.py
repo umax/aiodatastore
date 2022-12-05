@@ -348,7 +348,9 @@ class TestTimestampValue(unittest.TestCase):
     )
 
     def test__raw_to_py(self):
-        value = TimestampValue(None, raw_value="2022-01-01T01:02:03.123456000Z")
+        value = TimestampValue(
+            None, raw_value="2022-01-01T01:02:03.123456000Z"
+        )
         assert value.raw_to_py() == datetime(
             year=2022,
             month=1,
@@ -565,7 +567,9 @@ class TestGeoPointValue(unittest.TestCase):
         assert gp1 != gp2
 
     def test_getter(self):
-        value = GeoPointValue(None, raw_value={"latitude": 1.23, "longitude": 4.56})
+        value = GeoPointValue(
+            None, raw_value={"latitude": 1.23, "longitude": 4.56}
+        )
         assert value.py_value is None
         assert value.value == value.raw_to_py()
         assert value.py_value == value.raw_to_py()

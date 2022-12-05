@@ -1,6 +1,9 @@
 from typing import Any, Dict, List
 
-from aiodatastore.constants import CompositeFilterOperator, PropertyFilterOperator
+from aiodatastore.constants import (
+    CompositeFilterOperator,
+    PropertyFilterOperator,
+)
 from aiodatastore.decorators import dataclass
 from aiodatastore.property import PropertyReference
 from aiodatastore.values import Value

@@ -39,7 +39,9 @@ class Datastore:
         service_file: Optional[Union[str, io.IOBase]] = None,
         namespace: str = "",
     ):
-        self._namespace = namespace or os.environ.get("DATASTORE_NAMESPACE", "")
+        self._namespace = namespace or os.environ.get(
+            "DATASTORE_NAMESPACE", ""
+        )
         self._session = AioSession(None)
 
         if DEV_MODE:
@@ -61,7 +63,9 @@ class Datastore:
             "DATASTORE_PROJECT_ID", os.environ.get("GOOGLE_CLOUD_PROJECT")
         )
 
-    def _get_read_options(self, consistency: ReadConsistency, transaction_id: str):
+    def _get_read_options(
+        self, consistency: ReadConsistency, transaction_id: str
+    ):
         if transaction_id is not None:
             return {"transaction": transaction_id}
         else:

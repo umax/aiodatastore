@@ -28,8 +28,12 @@ class Value:
     def __init__(
         self, value: Any, raw_value: Any = None, indexed: Optional[bool] = True
     ):
-        self.py_value = value  # initialized manually on new property definition
-        self.raw_value = raw_value  # initialized on parsing response from datastore
+        self.py_value = (
+            value  # initialized manually on new property definition
+        )
+        self.raw_value = (
+            raw_value  # initialized on parsing response from datastore
+        )
         self.indexed = indexed
 
     def __eq__(self, other: Any) -> bool:
@@ -64,7 +68,9 @@ class NullValue(Value):
 
     def __init__(self, raw_value: Any = None, indexed: Optional[bool] = True):
         self.py_value = None
-        self.raw_value = raw_value  # initialized on parsing response from datastore
+        self.raw_value = (
+            raw_value  # initialized on parsing response from datastore
+        )
         self.indexed = indexed
 
     def raw_to_py(self):
