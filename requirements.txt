@@ -1,0 +1,7 @@
+# linting
+black
+flake8
+
+# testing
+pytest
+pytest-cov
