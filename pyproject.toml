@@ -1,0 +1,32 @@
+[project]
+name = "aiodatastore"
+version = "0.1.0"
+authors = [
+  { name="Max Usachev", email="maxusachev@gmail.com" },
+]
+description = "Low level and high performance asyncio client for Google Datastore REST API"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "gcloud-aio-auth>=3.1.0,<5.0.0",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Framework :: AsyncIO",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "https://github.com/umax/aiodatastore"
+Source = "https://github.com/umax/aiodatastore"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
