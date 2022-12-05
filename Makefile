@@ -1,9 +1,7 @@
-.PHONY: init black black-check flake8 unittest
+.PHONY: black black-check flake8 unittest
 
 SOURCE_FILES = aiodatastore tests
 
-init:
-	pip install -r requirements.txt
 
 black:
 	black $(SOURCE_FILES)
@@ -15,4 +13,4 @@ flake8:
 	flake8 $(SOURCE_FILES)
 
 unittest:
-	python -m pytest -v --cov=aiodatastore tests/unit
+	python -m pytest -v --cov-report=term-missing --cov=aiodatastore tests/unit
