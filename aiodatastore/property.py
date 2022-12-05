@@ -20,7 +20,7 @@ class PropertyReference:
 
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "PropertyReference":
-        return cls(data["name"])
+        return cls(name=data["name"])
 
     def to_ds(self) -> Dict[str, str]:
         return {"name": self.name}
@@ -48,7 +48,7 @@ class PropertyOrder:
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "PropertyOrder":
         return cls(
-            PropertyReference(data["property"]["name"]),
+            property=PropertyReference(data["property"]["name"]),
             direction=Direction(data["direction"]),
         )
 

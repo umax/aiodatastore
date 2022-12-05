@@ -34,12 +34,12 @@ class TestMutationResult(unittest.TestCase):
 
     def test_init(self):
         key = Key(PartitionId("project1"), [PathElement("kind1")])
-        mr = MutationResult(key, "version1")
-        assert mr.key == key
+        mr = MutationResult("version1", key)
         assert mr.version == "version1"
+        assert mr.key == key
         assert mr.conflict_detected is False
 
-        mr = MutationResult(key, "version1", conflict_detected=True)
+        mr = MutationResult("version1", key, conflict_detected=True)
         assert mr.conflict_detected is True
 
 
