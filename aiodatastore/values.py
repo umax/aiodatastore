@@ -26,7 +26,7 @@ class Value:
     __slots__ = ("py_value", "raw_value", "indexed")
 
     def __init__(
-        self, value: Any = None, raw_value: Any = None, indexed: Optional[bool] = True
+        self, value: Any, raw_value: Any = None, indexed: Optional[bool] = True
     ):
         self.py_value = value  # initialized manually on new property definition
         self.raw_value = raw_value  # initialized on parsing response from datastore
@@ -61,6 +61,11 @@ class Value:
 
 class NullValue(Value):
     type_name = "nullValue"
+
+    def __init__(self, raw_value: Any = None, indexed: Optional[bool] = True):
+        self.py_value = None
+        self.raw_value = raw_value  # initialized on parsing response from datastore
+        self.indexed = indexed
 
     def raw_to_py(self):
         return None
@@ -141,9 +146,13 @@ class ArrayValue(Value):
                     break
             else:
                 raise RuntimeError(f'unsupported type of "{el}" array element')
+
             value_type = VALUE_TYPES[key]
+            # NullValue has no positional argument `value`
+            args = () if value_type is NullValue else (None,)
             result.append(
                 value_type(
+                    *args,
                     raw_value=el[key],
                     indexed=not el.get("excludeFromIndexes"),
                 )

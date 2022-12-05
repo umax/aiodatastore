@@ -23,17 +23,17 @@ class TestNullValue(unittest.TestCase):
         assert value.raw_to_py() is None
 
     def test__py_to_raw(self):
-        value = NullValue(value=None)
+        value = NullValue()
         assert value.py_to_raw() == "NULL_VALUE"
 
     def test__to_ds(self):
-        value = NullValue(value=None, indexed=False)
+        value = NullValue(indexed=False)
         value.to_ds() == {
             "nullValue": "NULL_VALUE",
             "excludeFromIndexes": True,
         }
 
-        value = NullValue(value=None, indexed=True)
+        value = NullValue(indexed=True)
         value.to_ds() == {
             "nullValue": "NULL_VALUE",
             "excludeFromIndexes": False,
@@ -42,8 +42,14 @@ class TestNullValue(unittest.TestCase):
     def test_eq(self):
         assert NullValue() == NullValue()
 
+    def test_getter(self):
+        value = NullValue(raw_value="NULL_VALUE")
+        assert value.py_value is None
+        assert value.value == value.raw_to_py()
+        assert value.py_value == value.raw_to_py()
+
     def test_create_from_py(self):
-        value = NullValue(value=None, indexed=True)
+        value = NullValue(indexed=True)
         assert value.py_value is None
         assert value.raw_value is None
         assert value.indexed is True
@@ -53,282 +59,286 @@ class TestNullValue(unittest.TestCase):
         assert value.raw_value is None
         assert value.indexed is False
 
-    def test_value_property(self):
-        value = NullValue(raw_value="NULL_VALUE")
-        assert value.py_value is None
-        assert value.value == value.raw_to_py()
-        assert value.py_value == value.raw_to_py()
-
 
 class TestBooleanValue(unittest.TestCase):
     def test__raw_to_py(self):
-        value = BooleanValue(raw_value=False)
+        value = BooleanValue(None, raw_value=False)
         assert value.raw_to_py() is False
 
-        value = BooleanValue(raw_value=True)
+        value = BooleanValue(None, raw_value=True)
         assert value.raw_to_py() is True
 
     def test__py_to_raw(self):
-        value = BooleanValue(value=True)
+        value = BooleanValue(True)
         assert value.py_to_raw() is True
 
-        value = BooleanValue(value=False)
+        value = BooleanValue(False)
         assert value.py_to_raw() is False
 
     def test__to_ds(self):
-        value = BooleanValue(value=True, indexed=False)
+        value = BooleanValue(True, indexed=False)
         value.to_ds() == {
             "booleanValue": True,
             "excludeFromIndexes": True,
         }
 
-        value = BooleanValue(value=False, indexed=True)
+        value = BooleanValue(False, indexed=True)
         value.to_ds() == {
             "booleanValue": False,
             "excludeFromIndexes": False,
         }
 
     def test_eq(self):
-        assert BooleanValue(value=False) == BooleanValue(value=False)
-        assert BooleanValue(value=True) != BooleanValue(value=False)
+        assert BooleanValue(False) == BooleanValue(False)
+        assert BooleanValue(True) == BooleanValue(True)
+        assert BooleanValue(True) != BooleanValue(False)
 
     def test_setter(self):
-        value = BooleanValue()
+        value = BooleanValue(None)
         assert value.py_value is None
         value.value = True
         assert value.py_value is True
         value.value = False
         assert value.py_value is False
 
-    def test_create_from_py(self):
-        value = BooleanValue(value=False, indexed=True)
-        assert value.py_value is False
-        assert value.raw_value is None
-        assert value.indexed is True
-
-        value = BooleanValue(value=True, indexed=False)
-        assert value.py_value is True
-        assert value.raw_value is None
-        assert value.indexed is False
-
-    def test_value_property(self):
-        value = BooleanValue(raw_value=True)
+    def test_getter(self):
+        value = BooleanValue(None, raw_value=True)
         assert value.py_value is None
         assert value.value == value.raw_to_py()
         assert value.py_value == value.raw_to_py()
 
+    def test_create_from_py(self):
+        value = BooleanValue(False, indexed=True)
+        assert value.py_value is False
+        assert value.raw_value is None
+        assert value.indexed is True
+
+        value = BooleanValue(True, indexed=False)
+        assert value.py_value is True
+        assert value.raw_value is None
+        assert value.indexed is False
+
 
 class TestStringValue(unittest.TestCase):
     def test__raw_to_py(self):
-        value = StringValue(raw_value="string1")
+        value = StringValue(None, raw_value="string1")
         assert value.raw_to_py() == "string1"
 
-        value = StringValue(raw_value="")
+        value = StringValue(None, raw_value="")
         assert value.raw_to_py() == ""
 
     def test__py_to_raw(self):
-        value = StringValue(value="string1")
+        value = StringValue("string1")
         assert value.py_to_raw() == "string1"
 
-        value = StringValue(value="")
+        value = StringValue("")
         assert value.py_to_raw() == ""
 
     def test__to_ds(self):
-        value = StringValue(value="string1", indexed=False)
+        value = StringValue("string1", indexed=False)
         value.to_ds() == {
             "stringValue": "string1",
             "excludeFromIndexes": True,
         }
 
-        value = StringValue(value="", indexed=True)
+        value = StringValue("", indexed=True)
         value.to_ds() == {
             "stringValue": "",
             "excludeFromIndexes": False,
         }
 
     def test_eq(self):
-        assert StringValue(value="str1") == StringValue(value="str1")
-        assert StringValue(value="str1") != StringValue(value="str2")
+        assert StringValue("str1") == StringValue("str1")
+        assert StringValue("str1") != StringValue("str2")
 
     def test_setter(self):
-        value = StringValue()
+        value = StringValue(None)
         assert value.py_value is None
         value.value = "str1"
         assert value.py_value == "str1"
         value.value = "str2"
         assert value.py_value == "str2"
 
-    def test_create_from_py(self):
-        value = StringValue(value="string1", indexed=True)
-        assert value.py_value == "string1"
-        assert value.raw_value is None
-        assert value.indexed is True
-
-        value = StringValue(value="", indexed=False)
-        assert value.py_value == ""
-        assert value.raw_value is None
-        assert value.indexed is False
-
-    def test_value_property(self):
-        value = StringValue(raw_value="string1")
+    def test_getter(self):
+        value = StringValue(None, raw_value="string1")
         assert value.py_value is None
         assert value.value == value.raw_to_py()
         assert value.py_value == value.raw_to_py()
 
+    def test_create_from_py(self):
+        value = StringValue("string1", indexed=True)
+        assert value.py_value == "string1"
+        assert value.raw_value is None
+        assert value.indexed is True
+
+        value = StringValue("", indexed=False)
+        assert value.py_value == ""
+        assert value.raw_value is None
+        assert value.indexed is False
+
 
 class TestIntegerValue(unittest.TestCase):
     def test__raw_to_py(self):
-        value = IntegerValue(raw_value="123")
+        value = IntegerValue(None, raw_value="123")
         assert value.raw_to_py() == 123
 
-        value = IntegerValue(raw_value="0")
+        value = IntegerValue(None, raw_value="0")
         assert value.raw_to_py() == 0
 
-        value = IntegerValue(raw_value="-123")
+        value = IntegerValue(None, raw_value="-123")
         assert value.raw_to_py() == -123
 
     def test__py_to_raw(self):
-        value = IntegerValue(value=123)
+        value = IntegerValue(123)
         assert value.py_to_raw() == "123"
 
-        value = IntegerValue(value=0)
+        value = IntegerValue(0)
         assert value.py_to_raw() == "0"
 
-        value = IntegerValue(value=-123)
+        value = IntegerValue(-123)
         assert value.py_to_raw() == "-123"
 
     def test__to_ds(self):
-        value = IntegerValue(value=123, indexed=False)
+        value = IntegerValue(123, indexed=False)
         value.to_ds() == {
             "integerValue": "123",
             "excludeFromIndexes": True,
         }
 
-        value = IntegerValue(value=0, indexed=True)
+        value = IntegerValue(0, indexed=True)
         value.to_ds() == {
             "integerValue": "0",
             "excludeFromIndexes": False,
         }
 
-        value = IntegerValue(value=-123, indexed=True)
+        value = IntegerValue(-123, indexed=True)
         value.to_ds() == {
             "integerValue": "-123",
             "excludeFromIndexes": False,
         }
 
     def test_eq(self):
-        assert IntegerValue(value=123) == IntegerValue(value=123)
-        assert IntegerValue(value=123) != IntegerValue(value=122)
+        assert IntegerValue(123) == IntegerValue(123)
+        assert IntegerValue(123) != IntegerValue(122)
 
     def test_setter(self):
-        value = IntegerValue()
+        value = IntegerValue(None)
         assert value.py_value is None
         value.value = 1
         assert value.py_value == 1
         value.value = 2
         assert value.py_value == 2
 
-    def test_create_from_py(self):
-        value = IntegerValue(value=123, indexed=True)
-        assert value.py_value == 123
-        assert value.raw_value is None
-        assert value.indexed is True
-
-        value = IntegerValue(value=0, indexed=False)
-        assert value.py_value == 0
-        assert value.raw_value is None
-        assert value.indexed is False
-
-        value = IntegerValue(value=-123, indexed=False)
-        assert value.py_value == -123
-        assert value.raw_value is None
-        assert value.indexed is False
-
-    def test_value_property(self):
-        value = IntegerValue(raw_value="123")
+    def test_getter(self):
+        value = IntegerValue(None, raw_value="123")
         assert value.py_value is None
         assert value.value == value.raw_to_py()
         assert value.py_value == value.raw_to_py()
 
+    def test_create_from_py(self):
+        value = IntegerValue(123, indexed=True)
+        assert value.py_value == 123
+        assert value.raw_value is None
+        assert value.indexed is True
+
+        value = IntegerValue(0, indexed=False)
+        assert value.py_value == 0
+        assert value.raw_value is None
+        assert value.indexed is False
+
+        value = IntegerValue(-123, indexed=False)
+        assert value.py_value == -123
+        assert value.raw_value is None
+        assert value.indexed is False
+
 
 class TestDoubleValue(unittest.TestCase):
     def test__raw_to_py(self):
-        value = DoubleValue(raw_value=1.23)
+        value = DoubleValue(None, raw_value=1.23)
         assert value.raw_to_py() == 1.23
 
-        value = DoubleValue(raw_value=0.0)
+        value = DoubleValue(None, raw_value=0.0)
         assert value.raw_to_py() == 0.0
 
-        value = DoubleValue(raw_value=-1.23)
+        value = DoubleValue(None, raw_value=-1.23)
         assert value.raw_to_py() == -1.23
 
     def test__py_to_raw(self):
-        value = DoubleValue(value=1.23)
+        value = DoubleValue(1.23)
         assert value.py_to_raw() == 1.23
 
-        value = DoubleValue(value=0.0)
+        value = DoubleValue(0.0)
         assert value.py_to_raw() == 0.0
 
-        value = DoubleValue(value=-1.23)
+        value = DoubleValue(-1.23)
         assert value.py_to_raw() == -1.23
 
     def test__to_ds(self):
-        value = DoubleValue(value=1.23, indexed=False)
+        value = DoubleValue(1.23, indexed=False)
         value.to_ds() == {
             "doubleValue": 1.23,
             "excludeFromIndexes": True,
         }
 
-        value = DoubleValue(value=0.0, indexed=True)
+        value = DoubleValue(0.0, indexed=True)
         value.to_ds() == {
             "doubleValue": 0.0,
             "excludeFromIndexes": False,
         }
 
-        value = DoubleValue(value=-1.23, indexed=True)
+        value = DoubleValue(-1.23, indexed=True)
         value.to_ds() == {
             "doubleValue": -1.23,
             "excludeFromIndexes": False,
         }
 
     def test_eq(self):
-        assert DoubleValue(value=1.23) == DoubleValue(value=1.23)
-        assert DoubleValue(value=1.23) != DoubleValue(value=1.24)
+        assert DoubleValue(1.23) == DoubleValue(1.23)
+        assert DoubleValue(1.23) != DoubleValue(1.24)
 
     def test_setter(self):
-        value = DoubleValue()
+        value = DoubleValue(None)
         assert value.py_value is None
         value.value = 1.23
         assert value.py_value == 1.23
         value.value = 4.56
         assert value.py_value == 4.56
 
-    def test_create_from_py(self):
-        value = DoubleValue(value=1.23, indexed=True)
-        assert value.py_value == 1.23
-        assert value.raw_value is None
-        assert value.indexed is True
-
-        value = DoubleValue(value=0.0, indexed=False)
-        assert value.py_value == 0.0
-        assert value.raw_value is None
-        assert value.indexed is False
-
-        value = DoubleValue(value=-1.23, indexed=False)
-        assert value.py_value == -1.23
-        assert value.raw_value is None
-        assert value.indexed is False
-
-    def test_value_property(self):
-        value = DoubleValue(raw_value=1.23)
+    def test_getter(self):
+        value = DoubleValue(None, raw_value=1.23)
         assert value.py_value is None
         assert value.value == value.raw_to_py()
         assert value.py_value == value.raw_to_py()
 
+    def test_create_from_py(self):
+        value = DoubleValue(1.23, indexed=True)
+        assert value.py_value == 1.23
+        assert value.raw_value is None
+        assert value.indexed is True
+
+        value = DoubleValue(0.0, indexed=False)
+        assert value.py_value == 0.0
+        assert value.raw_value is None
+        assert value.indexed is False
+
+        value = DoubleValue(-1.23, indexed=False)
+        assert value.py_value == -1.23
+        assert value.raw_value is None
+        assert value.indexed is False
+
 
 class TestTimestampValue(unittest.TestCase):
-    dt = datetime(
+    dt1 = datetime(
         year=2022,
+        month=1,
+        day=2,
+        hour=3,
+        minute=4,
+        second=5,
+        microsecond=123456,
+    )
+    dt2 = datetime(
+        year=2023,
         month=1,
         day=2,
         hour=3,
@@ -338,7 +348,7 @@ class TestTimestampValue(unittest.TestCase):
     )
 
     def test__raw_to_py(self):
-        value = TimestampValue(raw_value="2022-01-01T01:02:03.123456000Z")
+        value = TimestampValue(None, raw_value="2022-01-01T01:02:03.123456000Z")
         assert value.raw_to_py() == datetime(
             year=2022,
             month=1,
@@ -349,7 +359,7 @@ class TestTimestampValue(unittest.TestCase):
             microsecond=123456,
         )
 
-        value = TimestampValue(raw_value="2022-01-02T03:04:05.123456Z")
+        value = TimestampValue(None, raw_value="2022-01-02T03:04:05.123456Z")
         assert value.raw_to_py() == datetime(
             year=2022,
             month=1,
@@ -361,56 +371,52 @@ class TestTimestampValue(unittest.TestCase):
         )
 
     def test__py_to_raw(self):
-        value = TimestampValue(value=self.dt)
+        value = TimestampValue(self.dt1)
         assert value.py_to_raw() == "2022-01-02T03:04:05.123456"
 
     def test__to_ds(self):
-        value = TimestampValue(value=self.dt, indexed=False)
+        value = TimestampValue(self.dt1, indexed=False)
         value.to_ds() == {
             "timestampValue": "2022-01-02T03:04:05.123456",
             "excludeFromIndexes": True,
         }
 
-        value = TimestampValue(value=self.dt, indexed=True)
+        value = TimestampValue(self.dt1, indexed=True)
         value.to_ds() == {
             "doubleValue": "2022-01-02T03:04:05.123456",
             "excludeFromIndexes": False,
         }
 
     def test_eq(self):
-        t1 = TimestampValue(value="2022-01-02T03:04:05.123456")
-        t2 = TimestampValue(value="2022-01-02T03:04:05.123456")
-        assert t1 == t2
-
-        t1 = TimestampValue(value="2022-01-02T03:04:05.123456")
-        t2 = TimestampValue(value="2022-01-02T03:04:05.123457")
-        assert t1 != t2
+        assert TimestampValue(self.dt1) == TimestampValue(self.dt1)
+        assert TimestampValue(self.dt1) != TimestampValue(self.dt2)
 
     def test_setter(self):
-        value = TimestampValue()
+        value = TimestampValue(None)
         assert value.py_value is None
-        value.value = self.dt
-        assert value.py_value == self.dt
+        value.value = self.dt1
+        assert value.py_value == self.dt1
 
-    def test_create_from_py(self):
-        value = TimestampValue(value=self.dt, indexed=True)
-        assert value.py_value == self.dt
-        assert value.raw_value is None
-        assert value.indexed is True
-
-    def test_value_property(self):
-        value = TimestampValue(raw_value="2022-01-02T03:04:05.123456Z")
+    def test_getter(self):
+        value = TimestampValue(None, raw_value="2022-01-02T03:04:05.123456Z")
         assert value.py_value is None
         assert value.value == value.raw_to_py()
         assert value.py_value == value.raw_to_py()
 
+    def test_create_from_py(self):
+        value = TimestampValue(self.dt1, indexed=True)
+        assert value.py_value == self.dt1
+        assert value.raw_value is None
+        assert value.indexed is True
+
 
 class TestArrayValue(unittest.TestCase):
     def test__raw_to_py(self):
-        value = ArrayValue(raw_value={"values": []})
+        value = ArrayValue(None, raw_value={"values": []})
         assert value.raw_to_py() == []
 
         value = ArrayValue(
+            None,
             raw_value={
                 "values": [
                     {
@@ -426,7 +432,7 @@ class TestArrayValue(unittest.TestCase):
                         "excludeFromIndexes": False,
                     },
                 ],
-            }
+            },
         )
         value = value.raw_to_py()
         assert len(value) == 3
@@ -448,9 +454,9 @@ class TestArrayValue(unittest.TestCase):
 
     def test__py_to_raw(self):
         el1 = NullValue(indexed=True)
-        el2 = StringValue(value="string1", indexed=False)
-        el3 = IntegerValue(value=123, indexed=True)
-        value = ArrayValue(value=[el1, el2, el3])
+        el2 = StringValue("string1", indexed=False)
+        el3 = IntegerValue(123, indexed=True)
+        value = ArrayValue([el1, el2, el3])
         assert value.py_to_raw() == [
             el1.to_ds(),
             el2.to_ds(),
@@ -458,7 +464,7 @@ class TestArrayValue(unittest.TestCase):
         ]
 
     def test__to_ds(self):
-        value = ArrayValue(value=[], indexed=False)
+        value = ArrayValue([], indexed=False)
         value.to_ds() == {
             "arrayValue": {
                 "values": [],
@@ -466,9 +472,9 @@ class TestArrayValue(unittest.TestCase):
         }
 
         el1 = NullValue(indexed=True)
-        el2 = StringValue(value="string1", indexed=False)
-        el3 = IntegerValue(value=123, indexed=True)
-        value = ArrayValue(value=[el1, el2, el3], indexed=True)
+        el2 = StringValue("string1", indexed=False)
+        el3 = IntegerValue(123, indexed=True)
+        value = ArrayValue([el1, el2, el3], indexed=True)
         value.to_ds() == {
             "arrayValue": {
                 "values": [
@@ -480,42 +486,43 @@ class TestArrayValue(unittest.TestCase):
         }
 
     def test_eq(self):
-        a1 = ArrayValue(value=[BooleanValue(True), NullValue()])
-        a2 = ArrayValue(value=[BooleanValue(True), NullValue()])
+        a1 = ArrayValue([BooleanValue(True), NullValue()])
+        a2 = ArrayValue([BooleanValue(True), NullValue()])
         assert a1 == a2
 
-        a1 = ArrayValue(value=[BooleanValue(True), NullValue()])
-        a2 = ArrayValue(value=[NullValue(), BooleanValue(True)])
+        a1 = ArrayValue([BooleanValue(True), NullValue()])
+        a2 = ArrayValue([NullValue(), BooleanValue(True)])
         assert a1 != a2
 
     def test_setter(self):
-        value = ArrayValue()
+        value = ArrayValue(None)
         assert value.py_value is None
         value.value = [NullValue(), BooleanValue(True)]
         assert value.py_value == [NullValue(), BooleanValue(True)]
         value.value = [BooleanValue(False)]
         assert value.py_value == [BooleanValue(False)]
 
-    def test_create_from_py(self):
-        value = ArrayValue(value=[], indexed=True)
-        assert value.py_value == []
-        assert value.raw_value is None
-        assert value.indexed is True
-
-    def test_value_property(self):
-        value = ArrayValue(raw_value={"values": []})
+    def test_getter(self):
+        value = ArrayValue(None, raw_value={"values": []})
         assert value.py_value is None
         assert value.value == value.raw_to_py()
         assert value.py_value == value.raw_to_py()
+
+    def test_create_from_py(self):
+        value = ArrayValue([], indexed=True)
+        assert value.py_value == []
+        assert value.raw_value is None
+        assert value.indexed is True
 
 
 class TestGeoPointValue(unittest.TestCase):
     def test__raw_to_py(self):
         value = GeoPointValue(
+            None,
             raw_value={
                 "latitude": 1.23,
                 "longitude": 4.56,
-            }
+            },
         )
         value = value.raw_to_py()
         assert isinstance(value, LatLng)
@@ -523,14 +530,14 @@ class TestGeoPointValue(unittest.TestCase):
         assert value.lng == 4.56
 
     def test__py_to_raw(self):
-        value = GeoPointValue(value=LatLng(lat=1.23, lng=4.56))
+        value = GeoPointValue(LatLng(lat=1.23, lng=4.56))
         assert value.py_to_raw() == {
             "latitude": 1.23,
             "longitude": 4.56,
         }
 
     def test__to_ds(self):
-        value = GeoPointValue(value=LatLng(lat=1.23, lng=4.56), indexed=True)
+        value = GeoPointValue(LatLng(lat=1.23, lng=4.56), indexed=True)
         value.to_ds() == {
             "geoPointValue": {
                 "latitude": 1.23,
@@ -539,7 +546,7 @@ class TestGeoPointValue(unittest.TestCase):
             "excludeFromIndexes": False,
         }
 
-        value = GeoPointValue(value=LatLng(lat=1.23, lng=4.56), indexed=False)
+        value = GeoPointValue(LatLng(lat=1.23, lng=4.56), indexed=False)
         value.to_ds() == {
             "geoPointValue": {
                 "latitude": 1.23,
@@ -549,61 +556,61 @@ class TestGeoPointValue(unittest.TestCase):
         }
 
     def test_eq(self):
-        gp1 = GeoPointValue(value=LatLng(lat=1.23, lng=4.56))
-        gp2 = GeoPointValue(value=LatLng(lat=1.23, lng=4.56))
+        gp1 = GeoPointValue(LatLng(lat=1.23, lng=4.56))
+        gp2 = GeoPointValue(LatLng(lat=1.23, lng=4.56))
         assert gp1 == gp2
 
-        gp1 = GeoPointValue(value=LatLng(lat=1.23, lng=4.56))
-        gp2 = GeoPointValue(value=LatLng(lat=1.23, lng=4.57))
+        gp1 = GeoPointValue(LatLng(lat=1.23, lng=4.56))
+        gp2 = GeoPointValue(LatLng(lat=1.23, lng=4.57))
         assert gp1 != gp2
 
-    def test_create_from_py(self):
-        lat_lng = LatLng(lat=1.23, lng=4.56)
-        value = GeoPointValue(value=lat_lng, indexed=False)
-        assert value.py_value == lat_lng
-        assert value.raw_value is None
-        assert value.indexed is False
-
-    def test_value_property(self):
-        value = GeoPointValue(raw_value={"latitude": 1.23, "longitude": 4.56})
+    def test_getter(self):
+        value = GeoPointValue(None, raw_value={"latitude": 1.23, "longitude": 4.56})
         assert value.py_value is None
         assert value.value == value.raw_to_py()
         assert value.py_value == value.raw_to_py()
 
+    def test_create_from_py(self):
+        lat_lng = LatLng(lat=1.23, lng=4.56)
+        value = GeoPointValue(lat_lng, indexed=False)
+        assert value.py_value == lat_lng
+        assert value.raw_value is None
+        assert value.indexed is False
+
 
 class TestBlobValue(unittest.TestCase):
     def test__raw_to_py(self):
-        value = BlobValue(raw_value="aGVsbG8h")
+        value = BlobValue(None, raw_value="aGVsbG8h")
         assert value.raw_to_py() == b"hello!"
 
     def test__py_to_raw(self):
-        value = BlobValue(value="hello!")
+        value = BlobValue("hello!")
         assert value.py_to_raw() == "aGVsbG8h"
 
     def test__to_ds(self):
-        value = BlobValue(value="hello!", indexed=True)
+        value = BlobValue("hello!", indexed=True)
         value.to_ds() == {
             "blobValue": "aGVsbG8h",
             "excludeFromIndexes": False,
         }
 
-        value = BlobValue(value="hello!", indexed=False)
+        value = BlobValue("hello!", indexed=False)
         value.to_ds() == {
             "blobValue": "aGVsbG8h",
             "excludeFromIndexes": True,
         }
 
-    def test_create_from_py(self):
-        value = BlobValue(value="hello!", indexed=False)
-        assert value.py_value == "hello!"
-        assert value.raw_value is None
-        assert value.indexed is False
-
-    def test_value_property(self):
-        value = BlobValue(raw_value="aGVsbG8h")
+    def test_getter(self):
+        value = BlobValue(None, raw_value="aGVsbG8h")
         assert value.py_value is None
         assert value.value == value.raw_to_py()
         assert value.py_value == value.raw_to_py()
+
+    def test_create_from_py(self):
+        value = BlobValue("hello!", indexed=False)
+        assert value.py_value == "hello!"
+        assert value.raw_value is None
+        assert value.indexed is False
 
 
 class TestKeyValue(unittest.TestCase):
@@ -620,38 +627,38 @@ class TestKeyValue(unittest.TestCase):
     }
 
     def test__raw_to_py(self):
-        value = KeyValue(raw_value=self.raw_value)
+        value = KeyValue(None, raw_value=self.raw_value)
         assert value.raw_to_py() == Key.from_ds(self.raw_value)
 
     def test__py_to_raw(self):
         key = Key.from_ds(self.raw_value)
-        value = KeyValue(value=key)
+        value = KeyValue(key)
         assert value.py_to_raw() == self.raw_value
 
     def test__to_ds(self):
         key = Key.from_ds(self.raw_value)
 
-        value = KeyValue(value=key, indexed=True)
+        value = KeyValue(key, indexed=True)
         value.to_ds() == {
             "keyValue": key.to_ds(),
             "excludeFromIndexes": False,
         }
 
-        value = KeyValue(value=key, indexed=False)
+        value = KeyValue(key, indexed=False)
         value.to_ds() == {
             "keyValue": key.to_ds(),
             "excludeFromIndexes": True,
         }
 
-    def test_create_from_py(self):
-        key = Key.from_ds(self.raw_value)
-        value = KeyValue(value=key, indexed=False)
-        assert value.py_value == key
-        assert value.raw_value is None
-        assert value.indexed is False
-
-    def test_value_property(self):
-        value = KeyValue(raw_value=self.raw_value)
+    def test_getter(self):
+        value = KeyValue(None, raw_value=self.raw_value)
         assert value.py_value is None
         assert value.value == value.raw_to_py()
         assert value.py_value == value.raw_to_py()
+
+    def test_create_from_py(self):
+        key = Key.from_ds(self.raw_value)
+        value = KeyValue(key, indexed=False)
+        assert value.py_value == key
+        assert value.raw_value is None
+        assert value.indexed is False
