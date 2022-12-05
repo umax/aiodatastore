@@ -1,9 +1,9 @@
-name: lint
+name: test
 
 on: [push]
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -15,8 +15,8 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
-      run: pip install -r requirements.dev
-    - name: Analysing the code with black
-      run: make black-check
-    - name: Analysing the code with flake8
-      run: make flake8
+      run: |
+        pip install -r requirements
+        pip install -r requirements.dev
+    - name: Run tests
+      run: make unittest
