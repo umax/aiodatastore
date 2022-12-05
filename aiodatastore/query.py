@@ -107,12 +107,9 @@ class GQLQuery:
             "queryString": self.query,
             "allowLiterals": self.allow_literals,
             "namedBindings": {
-                key: value.to_ds()
-                for key, value in (self.named_bindings or {}).items()
+                key: value.to_ds() for key, value in (self.named_bindings or {}).items()
             },
-            "positionalBindings": [
-                v.to_ds() for v in (self.positional_bindings or [])
-            ],
+            "positionalBindings": [v.to_ds() for v in (self.positional_bindings or [])],
         }
 
 
@@ -129,9 +126,7 @@ class QueryResultBatch:
 
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "QueryResultBatch":
-        results = [
-            EntityResult.from_ds(er) for er in data.get("entityResults", [])
-        ]
+        results = [EntityResult.from_ds(er) for er in data.get("entityResults", [])]
 
         return cls(
             entity_results=results,

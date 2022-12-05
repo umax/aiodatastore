@@ -1,10 +1,13 @@
-.PHONY: init black flake8 unittest
+.PHONY: init black black-check flake8 unittest
 
 init:
 	pip install -r requirements.txt
 
 black:
-	black --line-length=79 -t py38 -t py39 -t py310 -t py311 .
+	black .
+
+black-check:
+	black --diff --check .
 
 flake8:
 	flake8 aiodatastore tests

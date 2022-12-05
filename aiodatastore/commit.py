@@ -37,9 +37,7 @@ class CommitResult:
 
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "CommitResult":
-        results = [
-            MutationResult.from_ds(mr) for mr in data["mutationResults"]
-        ]
+        results = [MutationResult.from_ds(mr) for mr in data["mutationResults"]]
 
         return cls(
             mutation_results=results,
