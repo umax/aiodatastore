@@ -3,7 +3,7 @@
 
 # aiodatastore
 
-__aiodatastore__ is a low level and high performance asyncio client for [Google Datastore](https://cloud.google.com/datastore). Inspired by [gcloud-aio](https://github.com/talkiq/gcloud-aio/blob/master/datastore) library, thanks!
+__aiodatastore__ is a low level and high performance asyncio client for [Google Datastore REST API](https://cloud.google.com/datastore/docs/reference/data/rest). Inspired by [gcloud-aio](https://github.com/talkiq/gcloud-aio/blob/master/datastore) library, thanks!
 
 Key advantages:
 
