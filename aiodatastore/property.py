@@ -1,7 +1,6 @@
 from typing import Any, Dict
 
 from aiodatastore.constants import Direction
-from aiodatastore.decorators import dataclass
 
 __all__ = (
     "PropertyReference",
@@ -10,28 +9,46 @@ __all__ = (
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/runQuery#PropertyReference
-@dataclass
 class PropertyReference:
-    name: str
+    __slots__ = ("name",)
+
+    def __init__(self, name: str) -> None:
+        self.name = name
+
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, PropertyReference) and self.name == other.name
 
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "PropertyReference":
-        return cls(name=data["name"])
+        return cls(data["name"])
 
-    def to_ds(self) -> Dict[str, Any]:
+    def to_ds(self) -> Dict[str, str]:
         return {"name": self.name}
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/runQuery#PropertyOrder
-@dataclass
 class PropertyOrder:
-    property: PropertyReference
-    direction: Direction = Direction.ASCENDING
+    __slots__ = ("property", "direction")
+
+    def __init__(
+        self,
+        property: PropertyReference,
+        direction: Direction = Direction.ASCENDING,
+    ) -> None:
+        self.property = property
+        self.direction = direction
+
+    def __eq__(self, other: Any) -> bool:
+        return (
+            isinstance(other, PropertyOrder)
+            and self.property == other.property
+            and self.direction == other.direction
+        )
 
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "PropertyOrder":
         return cls(
-            property=PropertyReference(data["property"]["name"]),
+            PropertyReference(data["property"]["name"]),
             direction=Direction(data["direction"]),
         )
 
