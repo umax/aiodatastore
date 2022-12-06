@@ -4,7 +4,6 @@ from aiodatastore.constants import (
     CompositeFilterOperator,
     PropertyFilterOperator,
 )
-from aiodatastore.decorators import dataclass
 from aiodatastore.property import PropertyReference
 from aiodatastore.values import Value
 
@@ -22,11 +21,18 @@ class Filter:
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/runQuery#PropertyFilter
-@dataclass
 class PropertyFilter(Filter):
-    property: PropertyReference
-    op: PropertyFilterOperator
-    value: Value
+    __slots__ = ("property", "op", "value")
+
+    def __init__(
+        self,
+        property: PropertyReference,
+        op: PropertyFilterOperator,
+        value: Value,
+    ) -> None:
+        self.property = property
+        self.op = op
+        self.value = value
 
     def to_ds(self) -> Dict[str, Any]:
         return {
@@ -39,10 +45,12 @@ class PropertyFilter(Filter):
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/runQuery#CompositeFilter
-@dataclass
 class CompositeFilter(Filter):
-    op: CompositeFilterOperator
-    filters: List[Filter]
+    __slots__ = ("op", "filters")
+
+    def __init__(self, op: CompositeFilterOperator, filters: List[Filter]) -> None:
+        self.op = op
+        self.filters = filters
 
     def to_ds(self) -> Dict[str, Any]:
         return {

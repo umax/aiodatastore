@@ -1,5 +1,4 @@
 from base64 import b64decode, b64encode
-from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Optional
 
@@ -174,10 +173,19 @@ class ArrayValue(Value):
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/Shared.Types/LatLng
-@dataclass
 class LatLng:
-    lat: float
-    lng: float
+    __slots__ = ("lat", "lng")
+
+    def __init__(self, lat: float, lng: float) -> None:
+        self.lat = lat
+        self.lng = lng
+
+    def __eq__(self, other: Any) -> bool:
+        return (
+            isinstance(other, LatLng)
+            and self.lat == other.lat
+            and self.lng == other.lng
+        )
 
 
 class GeoPointValue(Value):

@@ -1,5 +1,4 @@
 from typing import Dict
-from aiodatastore.decorators import dataclass
 
 __all__ = (
     "ReadOnlyOptions",
@@ -8,16 +7,17 @@ __all__ = (
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/beginTransaction#ReadOnly
-@dataclass
 class ReadOnlyOptions:
     def to_ds(self) -> Dict[str, Dict]:
         return {"readOnly": {}}
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/beginTransaction#ReadWrite
-@dataclass
 class ReadWriteOptions:
-    previous_transaction: str
+    __slots__ = ("previous_transaction",)
+
+    def __init__(self, previous_transaction: str) -> None:
+        self.previous_transaction = previous_transaction
 
     def to_ds(self) -> Dict[str, Dict[str, str]]:
         return {
