@@ -27,12 +27,14 @@ class TestNullValue(unittest.TestCase):
         assert value.py_to_raw() == "NULL_VALUE"
 
     def test__to_ds(self):
+        # py value
         value = NullValue(indexed=False)
         value.to_ds() == {
             "nullValue": "NULL_VALUE",
             "excludeFromIndexes": True,
         }
 
+        # py value
         value = NullValue(indexed=True)
         value.to_ds() == {
             "nullValue": "NULL_VALUE",
@@ -76,12 +78,21 @@ class TestBooleanValue(unittest.TestCase):
         assert value.py_to_raw() is False
 
     def test__to_ds(self):
+        # raw value
+        value = BooleanValue(None, raw_value=False)
+        value.to_ds() == {
+            "booleanValue": False,
+            "excludeFromIndexes": False,
+        }
+
+        # py value
         value = BooleanValue(True, indexed=False)
         value.to_ds() == {
             "booleanValue": True,
             "excludeFromIndexes": True,
         }
 
+        # py value
         value = BooleanValue(False, indexed=True)
         value.to_ds() == {
             "booleanValue": False,
@@ -135,12 +146,21 @@ class TestStringValue(unittest.TestCase):
         assert value.py_to_raw() == ""
 
     def test__to_ds(self):
+        # raw value
+        value = StringValue(None, raw_value="raw-value1")
+        value.to_ds() == {
+            "stringValue": "raw-valu1",
+            "excludeFromIndexes": False,
+        }
+
+        # py value
         value = StringValue("string1", indexed=False)
         value.to_ds() == {
             "stringValue": "string1",
             "excludeFromIndexes": True,
         }
 
+        # py value
         value = StringValue("", indexed=True)
         value.to_ds() == {
             "stringValue": "",
@@ -199,18 +219,28 @@ class TestIntegerValue(unittest.TestCase):
         assert value.py_to_raw() == "-123"
 
     def test__to_ds(self):
+        # raw value
+        value = IntegerValue(None, "123")
+        value.to_ds() == {
+            "integerValue": "123",
+            "excludeFromIndexes": False,
+        }
+
+        # py value
         value = IntegerValue(123, indexed=False)
         value.to_ds() == {
             "integerValue": "123",
             "excludeFromIndexes": True,
         }
 
+        # py value
         value = IntegerValue(0, indexed=True)
         value.to_ds() == {
             "integerValue": "0",
             "excludeFromIndexes": False,
         }
 
+        # py value
         value = IntegerValue(-123, indexed=True)
         value.to_ds() == {
             "integerValue": "-123",
@@ -274,18 +304,28 @@ class TestDoubleValue(unittest.TestCase):
         assert value.py_to_raw() == -1.23
 
     def test__to_ds(self):
+        # raw value
+        value = DoubleValue(None, raw_value=1.23)
+        value.to_ds() == {
+            "doubleValue": 1.23,
+            "excludeFromIndexes": False,
+        }
+
+        # py value
         value = DoubleValue(1.23, indexed=False)
         value.to_ds() == {
             "doubleValue": 1.23,
             "excludeFromIndexes": True,
         }
 
+        # py value
         value = DoubleValue(0.0, indexed=True)
         value.to_ds() == {
             "doubleValue": 0.0,
             "excludeFromIndexes": False,
         }
 
+        # py value
         value = DoubleValue(-1.23, indexed=True)
         value.to_ds() == {
             "doubleValue": -1.23,
@@ -375,12 +415,21 @@ class TestTimestampValue(unittest.TestCase):
         assert value.py_to_raw() == "2022-01-02T03:04:05.123456"
 
     def test__to_ds(self):
+        # raw value
+        value = TimestampValue(None, raw_value="raw-value1")
+        value.to_ds() == {
+            "timestampValue": "raw-value1",
+            "excludeFromIndexes": False,
+        }
+
+        # py value
         value = TimestampValue(self.dt1, indexed=False)
         value.to_ds() == {
             "timestampValue": "2022-01-02T03:04:05.123456",
             "excludeFromIndexes": True,
         }
 
+        # py value
         value = TimestampValue(self.dt1, indexed=True)
         value.to_ds() == {
             "doubleValue": "2022-01-02T03:04:05.123456",
@@ -561,6 +610,17 @@ class TestGeoPointValue(unittest.TestCase):
         }
 
     def test__to_ds(self):
+        # raw value
+        value = GeoPointValue(None, raw_value={"latitude": 1.23, "longitude": 4.56})
+        value.to_ds() == {
+            "geoPointValue": {
+                "latitude": 1.23,
+                "longitude": 4.56,
+            },
+            "excludeFromIndexes": False,
+        }
+
+        # py value
         value = GeoPointValue(LatLng(lat=1.23, lng=4.56), indexed=True)
         value.to_ds() == {
             "geoPointValue": {
@@ -570,6 +630,7 @@ class TestGeoPointValue(unittest.TestCase):
             "excludeFromIndexes": False,
         }
 
+        # py value
         value = GeoPointValue(LatLng(lat=1.23, lng=4.56), indexed=False)
         value.to_ds() == {
             "geoPointValue": {
@@ -612,12 +673,21 @@ class TestBlobValue(unittest.TestCase):
         assert value.py_to_raw() == "aGVsbG8h"
 
     def test__to_ds(self):
+        # raw value
+        value = BlobValue(None, raw_value="raw-value1")
+        value.to_ds() == {
+            "blobValue": "raw-value1",
+            "excludeFromIndexes": False,
+        }
+
+        # py value
         value = BlobValue("hello!", indexed=True)
         value.to_ds() == {
             "blobValue": "aGVsbG8h",
             "excludeFromIndexes": False,
         }
 
+        # py value
         value = BlobValue("hello!", indexed=False)
         value.to_ds() == {
             "blobValue": "aGVsbG8h",
