@@ -1,6 +1,5 @@
-import io
 import os
-from typing import List, Optional, Union
+from typing import Any, Dict, List, IO, Optional, Union
 
 from gcloud.aio.auth import AioSession, Token
 from aiodatastore.commit import CommitResult
@@ -36,7 +35,7 @@ class Datastore:
     def __init__(
         self,
         project_id: Optional[str] = None,
-        service_file: Optional[Union[str, io.IOBase]] = None,
+        service_file: Union[str, IO, None] = None,
         namespace: str = "",
     ):
         self._namespace = namespace or os.environ.get("DATASTORE_NAMESPACE", "")
@@ -50,7 +49,7 @@ class Datastore:
             self._token = Token(
                 service_file=service_file,
                 session=self._session.session,
-                scopes=SCOPES,
+                scopes=list(SCOPES),
             )
 
         if not self._project_id:
@@ -121,7 +120,7 @@ class Datastore:
     ) -> str:
         headers = await self._get_headers()
 
-        req_data = {}
+        req_data: Dict[str, Any] = {}
         if opts is not None:
             req_data = opts.to_ds()
 
@@ -137,7 +136,7 @@ class Datastore:
     # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/commit
     async def commit(
         self,
-        mutations: List[Mutation],
+        mutations: List[Union[Mutation, DeleteMutation]],
         transaction_id: Optional[str] = None,
         mode: Optional[Mode] = None,
     ) -> CommitResult:
@@ -162,23 +161,20 @@ class Datastore:
         return CommitResult.from_ds(resp_data)
 
     async def insert(self, entity: Entity) -> CommitResult:
-        mutation = InsertMutation(entity=entity)
+        mutation = InsertMutation(entity)
         return await self.commit([mutation])
 
     async def upsert(self, entity: Entity) -> CommitResult:
-        mutation = UpsertMutation(entity=entity)
+        mutation = UpsertMutation(entity)
         return await self.commit([mutation])
 
     async def update(self, entity: Entity) -> CommitResult:
-        mutation = UpdateMutation(entity=entity)
+        mutation = UpdateMutation(entity)
         return await self.commit([mutation])
 
-    async def delete(
-        self,
-        key: Optional[Key] = None,
-        entity: Optional[Entity] = None,
-    ) -> CommitResult:
-        mutation = DeleteMutation(key=key or entity.key)
+    async def delete(self, obj: Union[Entity, Key]) -> CommitResult:
+        key = obj.key if isinstance(obj, Entity) else obj
+        mutation = DeleteMutation(key)  # type: ignore
         return await self.commit([mutation])
 
     # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/runQuery
