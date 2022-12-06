@@ -35,6 +35,10 @@ class TestDatastore(unittest.TestCase):
         with mock.patch.dict(os.environ, {"GOOGLE_CLOUD_PROJECT": "proj2"}):
             assert ds._get_project_id() == "proj2"
 
+    def test_no_project_id(self):
+        with self.assertRaises(RuntimeError):
+            Datastore()
+
     def test__get_namespace(self):
         ds = Datastore(project_id="project1")
 
