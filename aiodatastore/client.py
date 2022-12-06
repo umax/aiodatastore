@@ -104,13 +104,12 @@ class Datastore:
             "keys": [key.to_ds() for key in keys],
         }
 
-        resp = await self._session.request(
+        await self._session.request(
             "POST",
             f"{API_URL}/projects/{self._project_id}:reserveIds",
             headers=headers,
             json=req_data,
         )
-        print(resp.status)
 
     # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/beginTransaction
     async def begin_transaction(
