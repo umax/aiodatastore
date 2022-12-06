@@ -20,3 +20,5 @@ jobs:
       run: make black-check
     - name: Analysing the code with flake8
       run: make flake8
+    - name: Analysing the code with mypy
+      run: make mypy

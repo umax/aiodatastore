@@ -1,6 +1,7 @@
 # linting
 black
 flake8
+mypy
 
 # testing
 pytest
