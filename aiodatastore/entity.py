@@ -1,6 +1,5 @@
 from typing import Any, Dict, Optional
 
-from aiodatastore.decorators import dataclass
 from aiodatastore.key import Key
 from aiodatastore.values import VALUE_TYPES, Value
 
@@ -11,10 +10,19 @@ __all__ = (
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/Shared.Types/Value#Entity
-@dataclass
 class Entity:
-    key: Optional[Key]
-    properties: Dict[str, Value]
+    __slots__ = ("key", "properties")
+
+    def __init__(self, key: Optional[Key], properties: Dict[str, Value]) -> None:
+        self.key = key
+        self.properties = properties
+
+    def __eq__(self, other: Any) -> bool:
+        return (
+            isinstance(other, Entity)
+            and self.key == other.key
+            and self.properties == other.properties
+        )
 
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "Entity":
@@ -33,10 +41,11 @@ class Entity:
                 indexed=not prop_value.get("excludeFromIndexes"),
             )
 
-        return cls(
-            key=Key.from_ds(data.get("key")),
-            properties=properties,
-        )
+        key = data.get("key")
+        if key is not None:
+            key = Key.from_ds(key)
+
+        return cls(key, properties=properties)
 
     def to_ds(self) -> Dict[str, Any]:
         return {
@@ -46,16 +55,18 @@ class Entity:
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/v1/EntityResult
-@dataclass
 class EntityResult:
-    entity: Entity
-    version: str = ""
-    cursor: str = ""
+    __slots__ = ("entity", "version", "cursor")
+
+    def __init__(self, entity: Entity, version: str = "", cursor: str = "") -> None:
+        self.entity = entity
+        self.version = version
+        self.cursor = cursor
 
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "EntityResult":
         return cls(
-            entity=Entity.from_ds(data["entity"]),
+            Entity.from_ds(data["entity"]),
             version=data.get("version", ""),
             cursor=data.get("cursor", ""),
         )
