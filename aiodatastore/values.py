@@ -22,8 +22,9 @@ __all__ = (
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/Shared.Types/Value
 class Value:
-    type_name = None
     __slots__ = ("py_value", "raw_value", "indexed")
+
+    type_name: str
 
     def __init__(
         self, value: Any, raw_value: Any = None, indexed: Optional[bool] = True
@@ -206,17 +207,14 @@ class KeyValue(Value):
 
 
 VALUE_TYPES = {
-    vtype.type_name: vtype
-    for vtype in (
-        NullValue,
-        BooleanValue,
-        StringValue,
-        IntegerValue,
-        DoubleValue,
-        TimestampValue,
-        BlobValue,
-        ArrayValue,
-        GeoPointValue,
-        KeyValue,
-    )
+    NullValue.type_name: NullValue,
+    BooleanValue.type_name: BooleanValue,
+    StringValue.type_name: StringValue,
+    IntegerValue.type_name: IntegerValue,
+    DoubleValue.type_name: DoubleValue,
+    TimestampValue.type_name: TimestampValue,
+    BlobValue.type_name: BlobValue,
+    ArrayValue.type_name: ArrayValue,
+    GeoPointValue.type_name: GeoPointValue,
+    KeyValue.type_name: KeyValue,
 }
