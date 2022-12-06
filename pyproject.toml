@@ -30,3 +30,5 @@ Source = "https://github.com/umax/aiodatastore"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.flake8]

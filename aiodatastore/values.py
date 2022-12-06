@@ -167,7 +167,7 @@ class ArrayValue(Value):
         if self.py_value is not None:
             raw_value = self.py_to_raw()
         else:
-            raw_value = self.raw_value
+            raw_value = self.raw_value["values"]
 
         return {self.type_name: {"values": raw_value}}
 

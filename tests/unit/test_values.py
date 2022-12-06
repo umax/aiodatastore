@@ -464,6 +464,30 @@ class TestArrayValue(unittest.TestCase):
         ]
 
     def test__to_ds(self):
+        # raw value
+        value = ArrayValue(
+            None,
+            raw_value={
+                "values": [
+                    {
+                        "booleanValue": True,
+                        "excludeFromIndexes": False,
+                    },
+                ],
+            },
+        )
+        assert value.to_ds() == {
+            "arrayValue": {
+                "values": [
+                    {
+                        "booleanValue": True,
+                        "excludeFromIndexes": False,
+                    },
+                ],
+            },
+        }
+
+        # py value
         value = ArrayValue([], indexed=False)
         value.to_ds() == {
             "arrayValue": {
