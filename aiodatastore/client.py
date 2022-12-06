@@ -20,10 +20,8 @@ __all__ = ("Datastore",)
 
 try:
     API_URL = f'http://{os.environ["DATASTORE_EMULATOR_HOST"]}/v1'
-    DEV_MODE = True
 except KeyError:
     API_URL = "https://datastore.googleapis.com/v1"
-    DEV_MODE = False
 
 SCOPES = (
     "https://www.googleapis.com/auth/cloud-platform",
@@ -38,27 +36,28 @@ class Datastore:
         service_file: Union[str, IO, None] = None,
         namespace: str = "",
     ):
-        self._namespace = namespace or os.environ.get("DATASTORE_NAMESPACE", "")
-        self._session = AioSession(None)
+        self._project_id = project_id or self._get_project_id()
+        if not self._project_id:
+            raise RuntimeError("project id not set")
 
-        if DEV_MODE:
-            self._project_id = self._get_project_id()
-            self._token = None
-        else:
-            self._project_id = project_id
+        self._session = AioSession(None)
+        self._token = None
+        if service_file:
             self._token = Token(
                 service_file=service_file,
                 session=self._session.session,
                 scopes=list(SCOPES),
             )
 
-        if not self._project_id:
-            raise RuntimeError("project id not set")
+        self._namespace = namespace or self._get_namespace()
 
     def _get_project_id(self):
         return os.environ.get(
             "DATASTORE_PROJECT_ID", os.environ.get("GOOGLE_CLOUD_PROJECT")
         )
+
+    def _get_namespace(self):
+        return os.environ.get("DATASTORE_NAMESPACE", "")
 
     def _get_read_options(
         self,
@@ -77,7 +76,7 @@ class Datastore:
         }
 
     async def _get_headers(self):
-        if DEV_MODE:
+        if self._token is None:
             return {}
 
         token = await self._token.get()
