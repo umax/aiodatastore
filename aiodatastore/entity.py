@@ -37,6 +37,7 @@ class Entity:
                 )
             value_type = VALUE_TYPES[key]
             properties[prop_name] = value_type(
+                None,
                 raw_value=prop_value[key],
                 indexed=not prop_value.get("excludeFromIndexes"),
             )
