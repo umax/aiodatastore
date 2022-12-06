@@ -33,14 +33,12 @@ SCOPES = (
 class Datastore:
     def __init__(
         self,
-        project_id: Optional[str] = None,
+        project_id: str,
         service_file: Union[str, IO, None] = None,
         namespace: str = "",
     ):
-        self._project_id = project_id or self._get_project_id()
-        if not self._project_id:
-            raise RuntimeError("project id not set")
-
+        self._project_id = project_id
+        self._namespace = namespace
         self._session = AioSession(None)
         self._token = None
         if service_file:
@@ -49,16 +47,6 @@ class Datastore:
                 session=self._session.session,
                 scopes=list(SCOPES),
             )
-
-        self._namespace = namespace or self._get_namespace()
-
-    def _get_project_id(self):
-        return os.environ.get(
-            "DATASTORE_PROJECT_ID", os.environ.get("GOOGLE_CLOUD_PROJECT")
-        )
-
-    def _get_namespace(self):
-        return os.environ.get("DATASTORE_NAMESPACE", "")
 
     def _get_read_options(
         self,
