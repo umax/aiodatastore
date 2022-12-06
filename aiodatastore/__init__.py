@@ -10,7 +10,7 @@ from aiodatastore.constants import (  # noqa
     ResultType,
     MoreResultsType,
 )
-from aiodatastore.entity import Entity  # noqa
+from aiodatastore.entity import Entity, EntityResult  # noqa
 from aiodatastore.filters import CompositeFilter, PropertyFilter  # noqa
 from aiodatastore.key import PartitionId, PathElement, Key  # noqa
 from aiodatastore.lookup import LookupResult  # noqa
