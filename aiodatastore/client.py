@@ -6,6 +6,7 @@ from aiodatastore.commit import CommitResult
 from aiodatastore.constants import Mode, ReadConsistency
 from aiodatastore.entity import Entity
 from aiodatastore.key import Key
+from aiodatastore.lookup import LookupResult
 from aiodatastore.mutation import (
     Mutation,
     InsertMutation,
@@ -110,6 +111,28 @@ class Datastore:
             headers=headers,
             json=req_data,
         )
+
+    # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/lookup
+    async def lookup(
+        self,
+        keys: List[Key],
+        consistency: ReadConsistency = ReadConsistency.EVENTUAL,
+        transaction_id: Optional[str] = None,
+    ) -> LookupResult:
+        headers = await self._get_headers()
+        req_data = {
+            "keys": [key.to_ds() for key in keys],
+            "readOptions": self._get_read_options(consistency, transaction_id),
+        }
+
+        resp = await self._session.request(
+            "POST",
+            f"{API_URL}/projects/{self._project_id}:lookup",
+            headers=headers,
+            json=req_data,
+        )
+        resp_data = await resp.json()
+        return LookupResult.from_ds(resp_data)
 
     # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/beginTransaction
     async def begin_transaction(

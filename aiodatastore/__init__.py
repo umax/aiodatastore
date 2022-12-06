@@ -13,6 +13,7 @@ from aiodatastore.constants import (  # noqa
 from aiodatastore.entity import Entity  # noqa
 from aiodatastore.filters import CompositeFilter, PropertyFilter  # noqa
 from aiodatastore.key import PartitionId, PathElement, Key  # noqa
+from aiodatastore.lookup import LookupResult  # noqa
 from aiodatastore.mutation import (  # noqa
     InsertMutation,
     UpdateMutation,
