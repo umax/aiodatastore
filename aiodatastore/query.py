@@ -1,7 +1,6 @@
 from typing import Any, Dict, List, Optional, Union
 
 from aiodatastore.constants import MoreResultsType, ResultType
-from aiodatastore.decorators import dataclass
 from aiodatastore.entity import EntityResult
 from aiodatastore.filters import CompositeFilter, PropertyFilter
 from aiodatastore.property import PropertyReference, PropertyOrder
@@ -18,46 +17,79 @@ __all__ = (
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/runQuery#Projection
-@dataclass
 class Projection:
-    property: PropertyReference
+    __slots__ = ("property",)
+
+    def __init__(self, property: PropertyReference) -> None:
+        self.property = property
+
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, Projection) and self.property == other.property
 
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "Projection":
-        return cls(property=PropertyReference(data["property"]["name"]))
+        return cls(PropertyReference(data["property"]["name"]))
 
     def to_ds(self) -> Dict[str, Any]:
         return {"property": self.property.to_ds()}
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/runQuery#KindExpression
-@dataclass
 class KindExpression:
-    name: str
+    __slots__ = ("name",)
+
+    def __init__(self, name: str) -> None:
+        self.name = name
+
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, KindExpression) and self.name == other.name
 
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "KindExpression":
-        return cls(name=data["name"])
+        return cls(data["name"])
 
-    def to_ds(self) -> Dict[str, Any]:
+    def to_ds(self) -> Dict[str, str]:
         return {"name": self.name}
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/runQuery#Query
-@dataclass
 class Query:
-    projection: Optional[List[Projection]] = None
-    kind: Optional[KindExpression] = None
-    filter: Optional[Union[CompositeFilter, PropertyFilter]] = None
-    order: Optional[List[PropertyOrder]] = None
-    distinct_on: Optional[List[PropertyReference]] = None
-    start_cursor: str = ""
-    end_cursor: str = ""
-    offset: Optional[int] = None
-    limit: Optional[int] = None
+    __slots__ = (
+        "projection",
+        "kind",
+        "filter",
+        "order",
+        "distinct_on",
+        "start_cursor",
+        "end_cursor",
+        "offset",
+        "limit",
+    )
+
+    def __init__(
+        self,
+        projection: Optional[List[Projection]] = None,
+        kind: Optional[KindExpression] = None,
+        filter: Optional[Union[CompositeFilter, PropertyFilter]] = None,
+        order: Optional[List[PropertyOrder]] = None,
+        distinct_on: Optional[List[PropertyReference]] = None,
+        start_cursor: str = "",
+        end_cursor: str = "",
+        offset: Optional[int] = None,
+        limit: Optional[int] = None,
+    ) -> None:
+        self.projection = projection
+        self.kind = kind
+        self.filter = filter
+        self.order = order
+        self.distinct_on = distinct_on
+        self.start_cursor = start_cursor
+        self.end_cursor = end_cursor
+        self.offset = offset
+        self.limit = limit
 
     def to_ds(self) -> Dict[str, Any]:
-        data = {"kind": []}
+        data: Dict[str, Any] = {"kind": []}
 
         if self.projection:
             data["projection"] = [p.to_ds() for p in self.projection]
@@ -82,25 +114,42 @@ class Query:
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/Shared.Types/GqlQueryParameter
-@dataclass
 class GqlQueryParameter:
-    value: Optional[Value] = None
-    cursor: Optional[str] = None
+    __slots__ = ("value", "cursor")
+
+    def __init__(
+        self,
+        value: Optional[Value] = None,
+        cursor: Optional[str] = None,
+    ) -> None:
+        self.value = value
+        self.cursor = cursor
+        if value is None and cursor is None:
+            raise RuntimeError("value or cursor should be provided")
 
     def to_ds(self) -> Dict[str, Any]:
         if self.cursor is not None:
             return {"cursor": self.cursor}
-
-        return {"value": self.value.to_ds()}
+        if self.value is not None:
+            return {"value": self.value.to_ds()}
+        return {}
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/runQuery#GqlQuery
-@dataclass
 class GQLQuery:
-    query: str
-    allow_literals: bool = True
-    named_bindings: Optional[Dict[str, GqlQueryParameter]] = None
-    positional_bindings: Optional[List[Any]] = None
+    __slots__ = ("query", "allow_literals", "named_bindings", "positional_bindings")
+
+    def __init__(
+        self,
+        query: str,
+        allow_literals: bool = True,
+        named_bindings: Optional[Dict[str, GqlQueryParameter]] = None,
+        positional_bindings: Optional[List[Any]] = None,
+    ) -> None:
+        self.query = query
+        self.allow_literals = allow_literals
+        self.named_bindings = named_bindings
+        self.positional_bindings = positional_bindings
 
     def to_ds(self) -> Dict[str, Any]:
         return {
@@ -114,24 +163,43 @@ class GQLQuery:
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/runQuery#QueryResultBatch
-@dataclass
 class QueryResultBatch:
-    entity_results: List[EntityResult]
-    entity_result_type: ResultType = ResultType.UNSPECIFIED
-    skipped_results: int = 0
-    skipped_cursor: Optional[str] = None
-    end_cursor: str = ""
-    more_results: MoreResultsType = MoreResultsType.UNSPECIFIED
-    snapshot_version: str = ""
+    __slots__ = (
+        "entity_results",
+        "entity_result_type",
+        "skipped_results",
+        "skipped_cursor",
+        "end_cursor",
+        "more_results",
+        "snapshot_version",
+    )
+
+    def __init__(
+        self,
+        entity_results: List[EntityResult],
+        entity_result_type: ResultType = ResultType.UNSPECIFIED,
+        skipped_results: int = 0,
+        skipped_cursor: Optional[str] = None,
+        end_cursor: str = "",
+        more_results: MoreResultsType = MoreResultsType.UNSPECIFIED,
+        snapshot_version: str = "",
+    ) -> None:
+        self.entity_results = entity_results
+        self.entity_result_type = entity_result_type
+        self.skipped_results = skipped_results
+        self.skipped_cursor = skipped_cursor
+        self.end_cursor = end_cursor
+        self.more_results = more_results
+        self.snapshot_version = snapshot_version
 
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "QueryResultBatch":
         results = [EntityResult.from_ds(er) for er in data.get("entityResults", [])]
 
         return cls(
-            entity_results=results,
+            results,
             entity_result_type=ResultType(data["entityResultType"]),
-            skipped_results=data.get("skippedResults", 0),
+            skipped_results=int(data.get("skippedResults", 0)),
             skipped_cursor=data.get("skippedCursor"),
             end_cursor=data["endCursor"],
             more_results=MoreResultsType(data["moreResults"]),
@@ -139,7 +207,7 @@ class QueryResultBatch:
         )
 
     def to_ds(self) -> Dict[str, Any]:
-        data = {
+        data: Dict[str, Any] = {
             "endCursor": self.end_cursor,
             "entityResults": [er.to_ds() for er in self.entity_results],
             "entityResultType": self.entity_result_type.value,
