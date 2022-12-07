@@ -26,6 +26,7 @@ classifiers = [
 [project.urls]
 Homepage = "https://github.com/umax/aiodatastore"
 Source = "https://github.com/umax/aiodatastore"
+Changelog = "https://github.com/umax/aiodatastore/CHANGELOG.md"
 
 [build-system]
 requires = ["hatchling"]
