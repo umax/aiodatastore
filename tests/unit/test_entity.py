@@ -14,6 +14,11 @@ class TestEntity(unittest.TestCase):
     def setUp(self):
         self.key = Key(PartitionId("project1"), [PathElement("kind1")])
 
+    def test__init(self):
+        e = Entity(None, {})
+        assert e.key is None
+        assert e.properties == {}
+
     def test__from_ds__no_key(self):
         e = Entity.from_ds(
             {
@@ -90,16 +95,23 @@ class TestEntity(unittest.TestCase):
             },
         }
 
-    def test__init(self):
-        e = Entity(None, {})
-        assert e.key is None
-        assert e.properties == {}
-
 
 class TestEntityResult(unittest.TestCase):
     def setUp(self):
         key = Key(PartitionId("project1"), [PathElement("kind1")])
         self.entity = Entity(key, {})
+
+    def test__init__default_params(self):
+        er = EntityResult(self.entity)
+        assert er.entity == self.entity
+        assert er.version == ""
+        assert er.cursor == ""
+
+    def test__init__custom_params(self):
+        er = EntityResult(self.entity, version="version1", cursor="cursor1")
+        assert er.entity == self.entity
+        assert er.version == "version1"
+        assert er.cursor == "cursor1"
 
     def test__from_ds(self):
         er = EntityResult.from_ds(
@@ -136,14 +148,3 @@ class TestEntityResult(unittest.TestCase):
             "version": "version1",
             "cursor": "cursor1",
         }
-
-    def test__init(self):
-        er = EntityResult(self.entity)
-        assert er.entity == self.entity
-        assert er.version == ""
-        assert er.cursor == ""
-
-        er = EntityResult(self.entity, version="version1", cursor="cursor1")
-        assert er.entity == self.entity
-        assert er.version == "version1"
-        assert er.cursor == "cursor1"

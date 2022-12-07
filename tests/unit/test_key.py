@@ -1,9 +1,19 @@
 import unittest
 
-from aiodatastore import PartitionId, PathElement, Key
+from aiodatastore import Key, PartitionId, PathElement
 
 
 class TestPartitionId(unittest.TestCase):
+    def test__init__default_params(self):
+        p = PartitionId("project1")
+        assert p.project_id == "project1"
+        assert p.namespace_id is None
+
+    def test__init__custom_params(self):
+        p = PartitionId("project1", namespace_id="namespace1")
+        assert p.project_id == "project1"
+        assert p.namespace_id == "namespace1"
+
     def test__from_ds(self):
         p = PartitionId.from_ds(
             {
@@ -35,17 +45,25 @@ class TestPartitionId(unittest.TestCase):
             "namespaceId": "namespace1",
         }
 
-    def test__init(self):
-        p = PartitionId("project1")
-        assert p.project_id == "project1"
-        assert p.namespace_id is None
-
-        p = PartitionId("project1", namespace_id="namespace1")
-        assert p.project_id == "project1"
-        assert p.namespace_id == "namespace1"
-
 
 class TestPathElement(unittest.TestCase):
+    def test__init__default_params(self):
+        pe = PathElement("kind1")
+        assert pe.kind == "kind1"
+        assert pe.id is None
+        assert pe.name is None
+
+    def test__init__custom_params(self):
+        pe = PathElement("kind1", id="id1")
+        assert pe.kind == "kind1"
+        assert pe.id == "id1"
+        assert pe.name is None
+
+        pe = PathElement("kind1", name="name1")
+        assert pe.kind == "kind1"
+        assert pe.id is None
+        assert pe.name == "name1"
+
     def test__from_ds(self):
         pe = PathElement.from_ds(
             {
@@ -90,24 +108,15 @@ class TestPathElement(unittest.TestCase):
             "name": "name1",
         }
 
-    def test__init(self):
-        pe = PathElement("kind1")
-        assert pe.kind == "kind1"
-        assert pe.id is None
-        assert pe.name is None
-
-        pe = PathElement("kind1", id="id1")
-        assert pe.kind == "kind1"
-        assert pe.id == "id1"
-        assert pe.name is None
-
-        pe = PathElement("kind1", name="name1")
-        assert pe.kind == "kind1"
-        assert pe.id is None
-        assert pe.name == "name1"
-
 
 class TestKey:
+    def test__init(self):
+        partition = PartitionId("project1", namespace_id="namespace1")
+        path_element = PathElement("kind1", id="id1")
+        key = Key(partition, [path_element])
+        assert key.partition_id == partition
+        assert key.path == [path_element]
+
     def test__from_ds(self):
         key = Key.from_ds(
             {
@@ -158,10 +167,3 @@ class TestKey:
                 },
             ],
         }
-
-    def test__init(self):
-        partition = PartitionId("project1", namespace_id="namespace1")
-        path_element = PathElement("kind1", id="id1")
-        key = Key(partition, [path_element])
-        assert key.partition_id == partition
-        assert key.path == [path_element]

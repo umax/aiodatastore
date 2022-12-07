@@ -3,14 +3,31 @@ import unittest
 from aiodatastore import (
     CompositeFilter,
     CompositeFilterOperator,
-    PropertyFilter,
-    PropertyReference,
-    PropertyFilterOperator,
     IntegerValue,
+    PropertyFilter,
+    PropertyFilterOperator,
+    PropertyReference,
 )
 
 
 class TestCompositeFilter(unittest.TestCase):
+    def test__init(self):
+        prop_filter = PropertyFilter(
+            property=PropertyReference("prop1"),
+            op=PropertyFilterOperator.EQUAL,
+            value=IntegerValue(value=123),
+        )
+        composite_filter = CompositeFilter(
+            op=CompositeFilterOperator.AND,
+            filters=[],
+        )
+        f = CompositeFilter(
+            op=CompositeFilterOperator.AND,
+            filters=[prop_filter, composite_filter],
+        )
+        assert f.op == CompositeFilterOperator.AND
+        assert f.filters == [prop_filter, composite_filter]
+
     def test__to_ds(self):
         prop_filter = PropertyFilter(
             property=PropertyReference("prop1"),
@@ -35,25 +52,18 @@ class TestCompositeFilter(unittest.TestCase):
             },
         }
 
+
+class TestPropertyFilter(unittest.TestCase):
     def test__init(self):
-        prop_filter = PropertyFilter(
+        f = PropertyFilter(
             property=PropertyReference("prop1"),
             op=PropertyFilterOperator.EQUAL,
             value=IntegerValue(value=123),
         )
-        composite_filter = CompositeFilter(
-            op=CompositeFilterOperator.AND,
-            filters=[],
-        )
-        f = CompositeFilter(
-            op=CompositeFilterOperator.AND,
-            filters=[prop_filter, composite_filter],
-        )
-        assert f.op == CompositeFilterOperator.AND
-        assert f.filters == [prop_filter, composite_filter]
+        assert f.property == PropertyReference("prop1")
+        assert f.op == PropertyFilterOperator.EQUAL
+        assert f.value.value == 123
 
-
-class TestPropertyFilter(unittest.TestCase):
     def test__to_ds(self):
         f = PropertyFilter(
             property=PropertyReference("prop1"),
@@ -67,13 +77,3 @@ class TestPropertyFilter(unittest.TestCase):
                 "value": IntegerValue(value=123).to_ds(),
             },
         }
-
-    def test__init(self):
-        f = PropertyFilter(
-            property=PropertyReference("prop1"),
-            op=PropertyFilterOperator.EQUAL,
-            value=IntegerValue(value=123),
-        )
-        assert f.property == PropertyReference("prop1")
-        assert f.op == PropertyFilterOperator.EQUAL
-        assert f.value.value == 123

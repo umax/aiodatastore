@@ -2,19 +2,30 @@ import unittest
 
 from aiodatastore.constants import (
     Direction,
+    MoreResultsType,
     PropertyFilterOperator,
     ResultType,
-    MoreResultsType,
 )
 from aiodatastore.entity import Entity, EntityResult
 from aiodatastore.filters import PropertyFilter
 from aiodatastore.key import Key, PartitionId, PathElement
 from aiodatastore.property import PropertyOrder, PropertyReference
-from aiodatastore.query import Projection, KindExpression, Query, QueryResultBatch
+from aiodatastore.query import KindExpression, Projection, Query, QueryResultBatch
 from aiodatastore.values import IntegerValue
 
 
 class TestProjection(unittest.TestCase):
+    def test__init(self):
+        p = Projection(PropertyReference("property1"))
+        assert p.property == PropertyReference("property1")
+
+    def test__eq(self):
+        proj1 = Projection(PropertyReference("prop1"))
+        proj2 = Projection(PropertyReference("prop2"))
+        proj3 = Projection(PropertyReference("prop1"))
+        assert proj1 == proj3
+        assert proj1 != proj2
+
     def test__from_ds(self):
         p = Projection.from_ds(
             {
@@ -34,19 +45,16 @@ class TestProjection(unittest.TestCase):
             },
         }
 
-    def test__eq(self):
-        proj1 = Projection(PropertyReference("prop1"))
-        proj2 = Projection(PropertyReference("prop2"))
-        proj3 = Projection(PropertyReference("prop1"))
-        assert proj1 == proj3
-        assert proj1 != proj2
-
-    def test__init(self):
-        p = Projection(PropertyReference("property1"))
-        assert p.property == PropertyReference("property1")
-
 
 class TestKindExpression(unittest.TestCase):
+    def test__init(self):
+        ke = KindExpression("kind1")
+        assert ke.name == "kind1"
+
+    def test__eq(self):
+        assert KindExpression("name1") == KindExpression("name1")
+        assert KindExpression("name1") != KindExpression("name2")
+
     def test__from_ds(self):
         ke = KindExpression.from_ds({"name": "kind1"})
         assert isinstance(ke, KindExpression)
@@ -55,14 +63,6 @@ class TestKindExpression(unittest.TestCase):
     def test__to_ds(self):
         ke = KindExpression("kind1")
         assert ke.to_ds() == {"name": "kind1"}
-
-    def test__eq(self):
-        assert KindExpression("name1") == KindExpression("name1")
-        assert KindExpression("name1") != KindExpression("name2")
-
-    def test__init(self):
-        ke = KindExpression("kind1")
-        assert ke.name == "kind1"
 
 
 class TestQuery(unittest.TestCase):
@@ -159,6 +159,34 @@ class TestQueryResultBatch(unittest.TestCase):
         key = Key(PartitionId("project1"), [PathElement("kind1")])
         self.er = EntityResult(Entity(key, {}))
 
+    def test__init__default_params(self):
+        qrb = QueryResultBatch()
+        assert qrb.skipped_results == 0
+        assert qrb.skipped_cursor is None
+        assert qrb.entity_result_type == ResultType.UNSPECIFIED
+        assert qrb.entity_results == []
+        assert qrb.end_cursor == ""
+        assert qrb.more_results == MoreResultsType.UNSPECIFIED
+        assert qrb.snapshot_version == ""
+
+    def test__init__custom_params(self):
+        qrb = QueryResultBatch(
+            skipped_results=1,
+            skipped_cursor="skipped-cursor",
+            entity_result_type=ResultType.KEY_ONLY,
+            entity_results=[self.er],
+            end_cursor="end-cursor",
+            more_results=MoreResultsType.NO_MORE_RESULTS,
+            snapshot_version="snapshot-version",
+        )
+        assert qrb.skipped_results == 1
+        assert qrb.skipped_cursor == "skipped-cursor"
+        assert qrb.entity_result_type == ResultType.KEY_ONLY
+        assert qrb.entity_results == [self.er]
+        assert qrb.end_cursor == "end-cursor"
+        assert qrb.more_results == MoreResultsType.NO_MORE_RESULTS
+        assert qrb.snapshot_version == "snapshot-version"
+
     def test__from_ds(self):
         qrb = QueryResultBatch.from_ds(
             {
@@ -202,31 +230,3 @@ class TestQueryResultBatch(unittest.TestCase):
             "skippedResults": qrb.skipped_results,
             "skippedCursor": "skipped-cursor",
         }
-
-    def test__init__default_params(self):
-        qrb = QueryResultBatch()
-        assert qrb.skipped_results == 0
-        assert qrb.skipped_cursor is None
-        assert qrb.entity_result_type == ResultType.UNSPECIFIED
-        assert qrb.entity_results == []
-        assert qrb.end_cursor == ""
-        assert qrb.more_results == MoreResultsType.UNSPECIFIED
-        assert qrb.snapshot_version == ""
-
-    def test__init__custom_params(self):
-        qrb = QueryResultBatch(
-            skipped_results=1,
-            skipped_cursor="skipped-cursor",
-            entity_result_type=ResultType.KEY_ONLY,
-            entity_results=[self.er],
-            end_cursor="end-cursor",
-            more_results=MoreResultsType.NO_MORE_RESULTS,
-            snapshot_version="snapshot-version",
-        )
-        assert qrb.skipped_results == 1
-        assert qrb.skipped_cursor == "skipped-cursor"
-        assert qrb.entity_result_type == ResultType.KEY_ONLY
-        assert qrb.entity_results == [self.er]
-        assert qrb.end_cursor == "end-cursor"
-        assert qrb.more_results == MoreResultsType.NO_MORE_RESULTS
-        assert qrb.snapshot_version == "snapshot-version"
