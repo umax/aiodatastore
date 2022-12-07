@@ -142,6 +142,18 @@ class Datastore:
         resp_data = await resp.json()
         return resp_data["transaction"]
 
+    # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/rollback
+    async def rollback(self, transaction_id: str) -> None:
+        headers = await self._get_headers()
+        req_data = {"transaction": transaction_id}
+
+        await self._session.request(
+            "POST",
+            f"{API_URL}/projects/{self._project_id}:rollback",
+            headers=headers,
+            json=req_data,
+        )
+
     # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/commit
     async def commit(
         self,
