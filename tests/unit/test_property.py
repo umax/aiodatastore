@@ -9,6 +9,10 @@ class TestPropertyReference(unittest.TestCase):
         pr = PropertyReference("name1")
         assert pr.name == "name1"
 
+    def test__eq(self):
+        assert PropertyReference("name1") == PropertyReference("name1")
+        assert PropertyReference("name1") != PropertyReference("name2")
+
     def test__from_ds(self):
         pr = PropertyReference.from_ds({"name": "name1"})
         assert isinstance(pr, PropertyReference)
@@ -32,6 +36,21 @@ class TestPropertyOrder(unittest.TestCase):
         )
         assert po.property == PropertyReference("property1")
         assert po.direction == Direction.DESCENDING
+
+    def test__eq(self):
+        po1 = PropertyOrder(PropertyReference("name1"))
+        po2 = PropertyOrder(PropertyReference("name1"))
+        assert po1 == po2
+
+        po1 = PropertyOrder(
+            PropertyReference("name1"),
+            direction=Direction.ASCENDING,
+        )
+        po2 = PropertyOrder(
+            PropertyReference("name1"),
+            direction=Direction.DESCENDING,
+        )
+        assert po1 != po2
 
     def test__from_ds(self):
         po = PropertyOrder.from_ds(
