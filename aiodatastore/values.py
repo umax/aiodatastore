@@ -62,16 +62,22 @@ class Value:
 class NullValue(Value):
     type_name = "nullValue"
 
-    def __init__(self, raw_value: Any = None, indexed: Optional[bool] = True):
-        self.py_value = None
-        self.raw_value = raw_value  # initialized on parsing response from datastore
+    def __init__(self, indexed: Optional[bool] = True):
         self.indexed = indexed
 
-    def raw_to_py(self):
+    @property
+    def value(self):
         return None
 
-    def py_to_raw(self):
-        return "NULL_VALUE"
+    @value.setter
+    def value(self, value):
+        pass
+
+    def to_ds(self):
+        return {
+            self.type_name: "NULL_VALUE",
+            "excludeFromIndexes": not self.indexed,
+        }
 
 
 class BooleanValue(Value):
@@ -148,15 +154,15 @@ class ArrayValue(Value):
                 raise RuntimeError(f'unsupported type of "{el}" array element')
 
             value_type = VALUE_TYPES[key]
-            # NullValue has no positional argument `value`
-            args = () if value_type is NullValue else (None,)
-            result.append(
-                value_type(
-                    *args,
+            if value_type is NullValue:
+                _value = NullValue(indexed=not el.get("excludeFromIndexes"))
+            else:
+                _value = value_type(
+                    None,
                     raw_value=el[key],
                     indexed=not el.get("excludeFromIndexes"),
                 )
-            )
+            result.append(_value)
 
         return result
 

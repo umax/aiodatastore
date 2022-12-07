@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional
 
 from aiodatastore.key import Key
-from aiodatastore.values import VALUE_TYPES, Value
+from aiodatastore.values import VALUE_TYPES, NullValue
 
 __all__ = (
     "Entity",
@@ -13,7 +13,7 @@ __all__ = (
 class Entity:
     __slots__ = ("key", "properties")
 
-    def __init__(self, key: Optional[Key], properties: Dict[str, Value]) -> None:
+    def __init__(self, key: Optional[Key], properties: Dict[str, Any]) -> None:
         self.key = key
         self.properties = properties
 
@@ -35,12 +35,17 @@ class Entity:
                 raise RuntimeError(
                     f'unsupported value of "{prop_name}" property: {prop_value}'
                 )
+
             value_type = VALUE_TYPES[key]
-            properties[prop_name] = value_type(
-                None,
-                raw_value=prop_value[key],
-                indexed=not prop_value.get("excludeFromIndexes"),
-            )
+            if value_type is NullValue:
+                _value = NullValue(indexed=not prop_value.get("excludeFromIndexes"))
+            else:
+                _value = value_type(
+                    None,
+                    raw_value=prop_value[key],
+                    indexed=not prop_value.get("excludeFromIndexes"),
+                )
+            properties[prop_name] = _value
 
         key = data.get("key")
         if key is not None:

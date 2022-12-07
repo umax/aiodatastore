@@ -18,14 +18,6 @@ from aiodatastore import (
 
 
 class TestNullValue(unittest.TestCase):
-    def test__raw_to_py(self):
-        value = NullValue(raw_value="NULL_VALUE")
-        assert value.raw_to_py() is None
-
-    def test__py_to_raw(self):
-        value = NullValue()
-        assert value.py_to_raw() == "NULL_VALUE"
-
     def test__to_ds(self):
         # py value
         value = NullValue(indexed=False)
@@ -45,20 +37,14 @@ class TestNullValue(unittest.TestCase):
         assert NullValue() == NullValue()
 
     def test_getter(self):
-        value = NullValue(raw_value="NULL_VALUE")
-        assert value.py_value is None
-        assert value.value == value.raw_to_py()
-        assert value.py_value == value.raw_to_py()
+        value = NullValue()
+        assert value.value is None
 
     def test_create_from_py(self):
         value = NullValue(indexed=True)
-        assert value.py_value is None
-        assert value.raw_value is None
         assert value.indexed is True
 
         value = NullValue(indexed=False)
-        assert value.py_value is None
-        assert value.raw_value is None
         assert value.indexed is False
 
 
@@ -493,9 +479,7 @@ class TestArrayValue(unittest.TestCase):
         assert len(value) == 3
 
         el1 = value[0]
-        assert el1.raw_value == "NULL_VALUE"
-        assert el1.py_value is None
-        assert el1.indexed is False
+        assert el1 == NullValue()
 
         el2 = value[1]
         assert el2.raw_value == "string1"
