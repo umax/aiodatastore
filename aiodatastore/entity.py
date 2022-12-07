@@ -64,6 +64,14 @@ class EntityResult:
         self.version = version
         self.cursor = cursor
 
+    def __eq__(self, other: Any) -> bool:
+        return (
+            isinstance(other, EntityResult)
+            and self.entity == other.entity
+            and self.version == other.version
+            and self.cursor == other.cursor
+        )
+
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "EntityResult":
         return cls(

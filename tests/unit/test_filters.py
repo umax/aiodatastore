@@ -35,7 +35,7 @@ class TestCompositeFilter(unittest.TestCase):
             },
         }
 
-    def test_init(self):
+    def test__init(self):
         prop_filter = PropertyFilter(
             property=PropertyReference("prop1"),
             op=PropertyFilterOperator.EQUAL,
@@ -68,7 +68,7 @@ class TestPropertyFilter(unittest.TestCase):
             },
         }
 
-    def test_init(self):
+    def test__init(self):
         f = PropertyFilter(
             property=PropertyReference("prop1"),
             op=PropertyFilterOperator.EQUAL,

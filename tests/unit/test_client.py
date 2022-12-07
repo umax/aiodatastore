@@ -4,15 +4,15 @@ from aiodatastore import Datastore, ReadConsistency
 
 
 class TestDatastore(unittest.TestCase):
-    def test_init__project_id__param(self):
+    def test__init__project_id__param(self):
         ds = Datastore(project_id="project1")
         assert ds._project_id == "project1"
 
-    def test_init__namespace__param(self):
+    def test__init__namespace__param(self):
         ds = Datastore(project_id="project1", namespace="ns1")
         assert ds._namespace == "ns1"
 
-    def test_init__default_values(self):
+    def test__init__default_values(self):
         ds = Datastore(project_id="project1")
         assert ds._project_id == "project1"
         assert ds._namespace == ""

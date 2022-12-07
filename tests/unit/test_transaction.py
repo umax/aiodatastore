@@ -10,7 +10,7 @@ class TestReadOnlyOptions(unittest.TestCase):
             "readOnly": {},
         }
 
-    def test_init(self):
+    def test__init(self):
         ReadOnlyOptions()
 
 
@@ -23,6 +23,6 @@ class TestReadOWriteOptions(unittest.TestCase):
             },
         }
 
-    def test_init(self):
+    def test__init(self):
         opts = ReadWriteOptions("transaction1")
         assert opts.previous_transaction == "transaction1"

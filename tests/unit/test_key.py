@@ -35,7 +35,7 @@ class TestPartitionId(unittest.TestCase):
             "namespaceId": "namespace1",
         }
 
-    def test_init(self):
+    def test__init(self):
         p = PartitionId("project1")
         assert p.project_id == "project1"
         assert p.namespace_id is None
@@ -90,7 +90,7 @@ class TestPathElement(unittest.TestCase):
             "name": "name1",
         }
 
-    def test_init(self):
+    def test__init(self):
         pe = PathElement("kind1")
         assert pe.kind == "kind1"
         assert pe.id is None
@@ -159,7 +159,7 @@ class TestKey:
             ],
         }
 
-    def test_create(self):
+    def test__init(self):
         partition = PartitionId("project1", namespace_id="namespace1")
         path_element = PathElement("kind1", id="id1")
         key = Key(partition, [path_element])

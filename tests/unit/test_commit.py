@@ -32,7 +32,7 @@ class TestMutationResult(unittest.TestCase):
         assert mr.version == "version1"
         assert mr.conflict_detected is True
 
-    def test_init(self):
+    def test__init(self):
         key = Key(PartitionId("project1"), [PathElement("kind1")])
         mr = MutationResult("version1", key)
         assert mr.version == "version1"
@@ -69,7 +69,7 @@ class TestCommitResult(unittest.TestCase):
         assert cr.mutation_results == [MutationResult.from_ds(mr_data)]
         assert cr.index_updates == 123
 
-    def test_init(self):
+    def test__init(self):
         key = Key(PartitionId("project1"), [PathElement("kind1")])
         mr = MutationResult(key, "version1")
         cr = CommitResult(

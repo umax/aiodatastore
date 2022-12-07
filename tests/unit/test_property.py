@@ -14,7 +14,7 @@ class TestPropertyReference(unittest.TestCase):
         pr = PropertyReference("name1")
         pr.to_ds() == {"name": "name1"}
 
-    def test_init(self):
+    def test__init(self):
         pr = PropertyReference("name1")
         assert pr.name == "name1"
 
@@ -45,7 +45,7 @@ class TestPropertyOrder(unittest.TestCase):
             "direction": "DESCENDING",
         }
 
-    def test_init(self):
+    def test__init(self):
         po = PropertyOrder(
             property=PropertyReference("property1"),
         )

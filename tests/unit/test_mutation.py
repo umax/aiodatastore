@@ -19,7 +19,7 @@ class SetupMixin:
 
 
 class TestInsertMutation(SetupMixin, unittest.TestCase):
-    def test_init(self):
+    def test__init(self):
         mutation = InsertMutation(self.entity)
         assert mutation.entity == self.entity
 
@@ -29,7 +29,7 @@ class TestInsertMutation(SetupMixin, unittest.TestCase):
 
 
 class TestUpdateMutation(SetupMixin, unittest.TestCase):
-    def test_init(self):
+    def test__init(self):
         mutation = UpdateMutation(self.entity)
         assert mutation.entity == self.entity
 
@@ -39,7 +39,7 @@ class TestUpdateMutation(SetupMixin, unittest.TestCase):
 
 
 class TestUpsertMutation(SetupMixin, unittest.TestCase):
-    def test_init(self):
+    def test__init(self):
         mutation = UpsertMutation(self.entity)
         assert mutation.entity == self.entity
 
@@ -49,7 +49,7 @@ class TestUpsertMutation(SetupMixin, unittest.TestCase):
 
 
 class TestDeleteMutation(SetupMixin, unittest.TestCase):
-    def test_init(self):
+    def test__init(self):
         mutation = DeleteMutation(self.key)
         assert mutation.key == self.key
 

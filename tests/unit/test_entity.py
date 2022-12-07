@@ -90,7 +90,7 @@ class TestEntity(unittest.TestCase):
             },
         }
 
-    def test_init(self):
+    def test__init(self):
         e = Entity(None, {})
         assert e.key is None
         assert e.properties == {}
@@ -137,7 +137,7 @@ class TestEntityResult(unittest.TestCase):
             "cursor": "cursor1",
         }
 
-    def test_init(self):
+    def test__init(self):
         er = EntityResult(self.entity)
         assert er.entity == self.entity
         assert er.version == ""

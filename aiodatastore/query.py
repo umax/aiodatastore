@@ -176,31 +176,31 @@ class QueryResultBatch:
 
     def __init__(
         self,
-        entity_results: List[EntityResult],
-        entity_result_type: ResultType = ResultType.UNSPECIFIED,
         skipped_results: int = 0,
         skipped_cursor: Optional[str] = None,
+        entity_result_type: ResultType = ResultType.UNSPECIFIED,
+        entity_results: Optional[List[EntityResult]] = None,
         end_cursor: str = "",
         more_results: MoreResultsType = MoreResultsType.UNSPECIFIED,
         snapshot_version: str = "",
     ) -> None:
-        self.entity_results = entity_results
-        self.entity_result_type = entity_result_type
         self.skipped_results = skipped_results
         self.skipped_cursor = skipped_cursor
+        self.entity_result_type = entity_result_type
+        self.entity_results = entity_results or []
         self.end_cursor = end_cursor
         self.more_results = more_results
         self.snapshot_version = snapshot_version
 
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "QueryResultBatch":
-        results = [EntityResult.from_ds(er) for er in data.get("entityResults", [])]
-
         return cls(
-            results,
-            entity_result_type=ResultType(data["entityResultType"]),
             skipped_results=int(data.get("skippedResults", 0)),
             skipped_cursor=data.get("skippedCursor"),
+            entity_result_type=ResultType(data["entityResultType"]),
+            entity_results=[
+                EntityResult.from_ds(er) for er in data.get("entityResults", [])
+            ],
             end_cursor=data["endCursor"],
             more_results=MoreResultsType(data["moreResults"]),
             snapshot_version=data.get("snapshotVersion", ""),
@@ -208,14 +208,13 @@ class QueryResultBatch:
 
     def to_ds(self) -> Dict[str, Any]:
         data: Dict[str, Any] = {
-            "endCursor": self.end_cursor,
-            "entityResults": [er.to_ds() for er in self.entity_results],
+            "skippedResults": self.skipped_results,
             "entityResultType": self.entity_result_type.value,
+            "entityResults": [er.to_ds() for er in self.entity_results],
+            "endCursor": self.end_cursor,
             "moreResults": self.more_results.value,
             "snapshotVersion": self.snapshot_version,
         }
-        if self.skipped_results is not None:
-            data["skippedResults"] = self.skipped_results
         if self.skipped_cursor is not None:
             data["skippedCursor"] = self.skipped_cursor
 
