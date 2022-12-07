@@ -460,10 +460,16 @@ class TestTimestampValue(unittest.TestCase):
 
 
 class TestArrayValue(unittest.TestCase):
-    def test__raw_to_py(self):
+    def test__raw_to_py__empty_array(self):
         value = ArrayValue(None, raw_value={"values": []})
         assert value.raw_to_py() == []
 
+    def test__raw_to_py__unsupported_type(self):
+        value = ArrayValue(None, raw_value={"values": [{"key": "value"}]})
+        with self.assertRaises(RuntimeError):
+            value.raw_to_py()
+
+    def test__raw_to_py(self):
         value = ArrayValue(
             None,
             raw_value={
