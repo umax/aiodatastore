@@ -398,7 +398,7 @@ class TestTimestampValue(unittest.TestCase):
 
     def test__py_to_raw(self):
         value = TimestampValue(self.dt1)
-        assert value.py_to_raw() == "2022-01-02T03:04:05.123456"
+        assert value.py_to_raw() == "2022-01-02T03:04:05.123456Z"
 
     def test__to_ds(self):
         # raw value
