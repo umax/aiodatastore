@@ -1,19 +1,23 @@
-.PHONY: black black-check flake8 mypy unittest
-
-SOURCE_FILES = aiodatastore tests
+.PHONY: black black-check flake8 mypy test-integration test-unit
 
 
 black:
-	black $(SOURCE_FILES)
+	black aiodatastore tests
 
 black-check:
-	black --diff --check $(SOURCE_FILES)
+	black --diff --check aiodatastore tests
 
 flake8:
-	flake8 $(SOURCE_FILES)
+	flake8 aiodatastore tests
 
 mypy:
 	mypy aiodatastore
 
-unittest:
+rundatastore:
+	gcloud beta emulators datastore start --no-store-on-disk --project=test --consistency=1.0
+
+test-integration:
+	DATASTORE_EMULATOR_HOST=127.0.0.1:8081 python -m pytest -v --cov-report=term tests/integration
+
+test-unit:
 	python -m pytest -v --cov-report=term-missing --cov=aiodatastore tests/unit
