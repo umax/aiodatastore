@@ -32,4 +32,5 @@ Changelog = "https://github.com/umax/aiodatastore/blob/main/CHANGELOG.md"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.flake8]
+[tool.pytest.ini_options]
+norecursedirs = ".git"
