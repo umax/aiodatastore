@@ -48,7 +48,7 @@ from aiodatastore import Key, PartitionId, PathElement
 key = Key(PartitionId("project1"), [PathElement("Kind1")])
 ```
 
-You can also set namespace for key:
+You can also set [namespace](https://cloud.google.com/datastore/docs/concepts/multitenancy) for key:
 ```python
 from aiodatastore import Key, PartitionId, PathElement
 
