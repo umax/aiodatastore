@@ -9,11 +9,11 @@ __aiodatastore__ is a low level and high performance asyncio client for [Google 
 
 Key advantages:
 
-- lazy properties loading (that's why it fast, mostly)
+- lazy properties loading (that's why it's fast, mostly)
 
 - explicit value types for properties (no types guessing)
 
-- strictly following REST API data structures
+- strictly following Google Datastore REST API data structures
 
 
 ## Installation
