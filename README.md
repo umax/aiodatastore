@@ -62,3 +62,33 @@ from aiodatastore import Key, PartitionId, PathElement
 key1 = Key(PartitionId("project1"), [PathElement("Kind1", id="12345")])
 key2 = Key(PartitionId("project1"), [PathElement("Kind1", name="name1")])
 ```
+
+To create an entity, you have to specify entity key and properties. Properties is a dict with string keys and typed values. For each data type the library provides corresponding [value](https://cloud.google.com/datastore/docs/reference/data/rest/Shared.Types/Value) class. For every value (except ArrayValue) you can specify should it be indexed or not (indexed by default):
+```python
+from aiodatastore import Entity, Key, PartitionId, PathElement
+from aiodatastore import (
+    ArrayValue,
+    BoleanValue,
+    BlobValue,
+    DoubleValue,
+    GeoPointValue,
+    IntegerValue,
+    LatLng,
+    NullValue,
+    StringValue,
+    TimestampValue,
+)
+
+key = Key(PartitionId("project1"), [PathElement("Kind1")])
+entity = Entity(key, properties={
+    "array-property": ArrayValue([NullValue(), IntegerValue(123), StringValue("str1")]),
+    "bool-property": BooleanValue(True),
+    "blob-property": BlobValue("data to store as blob"),
+    "double-property": DoubleValue(1.23, indexed=False),
+    "geo-property": GeoPointValue(LatLng(1.23, 4.56)),
+    "integer-property": IntegerValue(123),
+    "null-property": NullValue(),
+    "string-property": StringValue("str1"),
+    "timestamp-property": TimestampValue(datetime.datetime.utcnow()),
+})
+```
