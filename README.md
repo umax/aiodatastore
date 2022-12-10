@@ -92,3 +92,37 @@ entity = Entity(key, properties={
     "timestamp-prop": TimestampValue(datetime.datetime.utcnow()),
 })
 ```
+
+To create new entity (the entity key's final path element may be incomplete):
+```python
+key = Key(PartitionId("project1"), [PathElement("Kind1")])
+entity = Entity(key, properties={
+    "string-prop": StringValue("some value"),
+})
+await client.insert(entity)
+```
+
+To update an entity (the entity must already exist. Must have a complete key path):
+```python
+entity.properties["string-prop"] = StringValue("new value")
+await client.update(entity)
+```
+
+To upsert an entity (the entity may or may not already exist. The entity key's final path element may be incomplete):
+```python
+key = Key(PartitionId("project1"), [PathElement("Kind1")])
+entity = Entity(key, properties={
+    "string-prop": StringValue("some value"),
+})
+await client.upsert(entity)
+```
+
+To delete an entity (the entity may or may not already exist. Must have a complete key path and must not be reserved/read-only):
+```python
+await client.delete(entity)
+```
+
+If you have entity's key or know how to build it:
+```python
+await client.delete(key)
+````
