@@ -14,3 +14,10 @@ Key advantages:
 - explicit value types for properties (no types guessing)
 
 - strictly following REST API data structures
+
+
+## Installation
+
+```
+pip install aiodatastore
+```
