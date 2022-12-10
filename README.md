@@ -21,3 +21,23 @@ Key advantages:
 ```
 pip install aiodatastore
 ```
+
+## Usage
+
+First, you need to instantiate datastore client:
+
+```python
+from aiodatastore import Datastore
+
+client = Datastore("project1", service_file="/path/to/file")
+```
+
+You can also set namespace if needed:
+
+```python
+from aiodatastore import Datastore
+
+client = Datastore("project1", service_file="/path/to/file", namespace="namespace1")
+```
+
+To use Datastore emulator (for tests or development), just define `DATASTORE_EMULATOR_HOST` environment variable (usually value is `127.0.0.1:8081`).
