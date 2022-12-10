@@ -22,9 +22,7 @@ Key advantages:
 pip install aiodatastore
 ```
 
-## Usage
-
-First, you need to instantiate datastore client:
+## How to create datastore client
 
 ```python
 from aiodatastore import Datastore
@@ -40,4 +38,30 @@ from aiodatastore import Datastore
 client = Datastore("project1", service_file="/path/to/file", namespace="namespace1")
 ```
 
-To use Datastore emulator (for tests or development), just define `DATASTORE_EMULATOR_HOST` environment variable (usually value is `127.0.0.1:8081`).
+To use [Datastore emulator](https://cloud.google.com/datastore/docs/tools/datastore-emulator) (for tests or development), just define `DATASTORE_EMULATOR_HOST` environment variable (usually value is `127.0.0.1:8081`).
+
+## How to create [keys](https://cloud.google.com/datastore/docs/reference/data/rest/Shared.Types/Value#Key) and [entities](https://cloud.google.com/datastore/docs/reference/data/rest/Shared.Types/Value#entity)
+
+```python
+from aiodatastore import Key, PartitionId, PathElement
+
+key = Key(PartitionId("project1"), [PathElement("Kind1")])
+```
+
+You can also set namespace for key:
+```python
+from aiodatastore import Key, PartitionId, PathElement
+
+key = Key(
+    PartitionId("project1", namespace_id="namespace1"),
+    [PathElement("Kind1")],
+)
+```
+
+And `id` or `name` for path element:
+```python
+from aiodatastore import Key, PartitionId, PathElement
+
+key1 = Key(PartitionId("project1"), [PathElement("Kind1", id="12345")])
+key2 = Key(PartitionId("project1"), [PathElement("Kind1", name="name1")])
+```
