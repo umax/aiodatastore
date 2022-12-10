@@ -52,10 +52,7 @@ You can also set namespace for key:
 ```python
 from aiodatastore import Key, PartitionId, PathElement
 
-key = Key(
-    PartitionId("project1", namespace_id="namespace1"),
-    [PathElement("Kind1")],
-)
+key = Key(PartitionId("project1", namespace_id="namespace1"), [PathElement("Kind1")])
 ```
 
 And `id` or `name` for path element:
