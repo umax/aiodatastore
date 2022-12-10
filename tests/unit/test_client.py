@@ -1,4 +1,6 @@
+import os
 import unittest
+from unittest import mock
 
 from aiodatastore import Datastore, ReadConsistency
 
@@ -12,10 +14,9 @@ class TestDatastore(unittest.TestCase):
         ds = Datastore(project_id="project1", namespace="ns1")
         assert ds._namespace == "ns1"
 
-    def test__init__default_values(self):
+    @mock.patch.dict(os.environ, {"DATASTORE_EMULATOR_HOST": "host1"})
+    def test__init__emulator_mode(self):
         ds = Datastore(project_id="project1")
-        assert ds._project_id == "project1"
-        assert ds._namespace == ""
         assert ds._token is None
 
     def test__get_read_options__transaction_id(self):

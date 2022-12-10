@@ -21,8 +21,10 @@ __all__ = ("Datastore",)
 
 try:
     API_URL = f'http://{os.environ["DATASTORE_EMULATOR_HOST"]}/v1'
+    EMULATOR_MODE = True
 except KeyError:
     API_URL = "https://datastore.googleapis.com/v1"
+    EMULATOR_MODE = False
 
 SCOPES = (
     "https://www.googleapis.com/auth/cloud-platform",
@@ -41,7 +43,7 @@ class Datastore:
         self._namespace = namespace
         self._session = AioSession(None)
         self._token = None
-        if service_file:
+        if not EMULATOR_MODE and service_file:
             self._token = Token(
                 service_file=service_file,
                 session=self._session.session,
