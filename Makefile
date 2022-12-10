@@ -1,4 +1,4 @@
-.PHONY: black black-check flake8 mypy test-integration test-unit
+.PHONY: black black-check build flake8 mypy test-integration test-unit
 
 
 black:
@@ -6,6 +6,9 @@ black:
 
 black-check:
 	black --diff --check aiodatastore tests
+
+build:
+	rm -rf dist/* && python -m build
 
 flake8:
 	flake8 aiodatastore tests
