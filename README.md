@@ -63,7 +63,7 @@ key1 = Key(PartitionId("project1"), [PathElement("Kind1", id="12345")])
 key2 = Key(PartitionId("project1"), [PathElement("Kind1", name="name1")])
 ```
 
-To create an entity, you have to specify entity key and properties. Properties is a dict with string keys and typed values. For each [data type](https://cloud.google.com/datastore/docs/reference/data/rest/Shared.Types/Value) the library provides corresponding value class. Every value (except ArrayValue) can be indexed or not (indexed by default):
+To create an entity object, you have to specify key and properties. Properties is a dict with string keys and typed values. For each [data type](https://cloud.google.com/datastore/docs/reference/data/rest/Shared.Types/Value) the library provides corresponding value class. Every value (except ArrayValue) can be indexed or not (indexed by default):
 ```python
 from aiodatastore import Entity, Key, PartitionId, PathElement
 from aiodatastore import (
@@ -91,6 +91,35 @@ entity = Entity(key, properties={
     "string-prop": StringValue("str1"),
     "timestamp-prop": TimestampValue(datetime.datetime.utcnow()),
 })
+```
+
+To access property value use `.value` attribute:
+```python
+print(entity.properties["integer-prop"].value)
+123
+```
+
+Use `.value` attribute to change property value and keep index status. Or assign new value and set index:
+```python
+print(entity.properties["integer-prop"].value, entity.properties["integer-prop"].indexed)
+123, True
+entity.properties["integer-prop"].value = 456
+print(entity.properties["integer-prop"].value, entity.properties["integer-prop"].indexed)
+456, True
+
+entity.properties["integer-prop"] = IntegerValue(456, indexed=True)
+print(entity.properties["integer-prop"].value, entity.properties["integer-prop"].indexed)
+456, True
+```
+
+Use `.indexed` attribute to access or change index:
+```python
+print(entity.properties["integer-prop"].indexed)
+True
+
+entity.properties["integer-prop"].indexed = False
+print(entity.properties["integer-prop"].indexed)
+False
 ```
 
 To create new entity (the entity key's final path element may be incomplete):
