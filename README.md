@@ -122,7 +122,7 @@ print(entity.properties["integer-prop"].indexed)
 False
 ```
 
-To create new entity (the entity key's final path element may be incomplete):
+To insert new entity (the entity key's final path element may be incomplete):
 ```python
 key = Key(PartitionId("project1"), [PathElement("Kind1")])
 entity = Entity(key, properties={
