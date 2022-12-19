@@ -127,7 +127,7 @@ class TimestampValue(Value):
         return datetime.fromisoformat(self.raw_value[:26].replace("Z", ""))
 
     def py_to_raw(self):
-        return datetime.isoformat(self.py_value) + "Z"
+        return datetime.isoformat(self.py_value)[:26] + "Z"
 
 
 class BlobValue(Value):

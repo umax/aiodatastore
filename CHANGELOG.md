@@ -1,3 +1,8 @@
+## 0.1.3 ()
+
+- Handle datetime value with tzinfo.
+
+
 ## 0.1.2 (2022-12-08)
 
 - Fix timestamp value conversion.
