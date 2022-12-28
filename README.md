@@ -40,7 +40,7 @@ client = Datastore("project1", service_file="/path/to/file", namespace="namespac
 
 To use [Datastore emulator](https://cloud.google.com/datastore/docs/tools/datastore-emulator) (for tests or development), just define `DATASTORE_EMULATOR_HOST` environment variable (usually value is `127.0.0.1:8081`).
 
-## How to create [keys](https://cloud.google.com/datastore/docs/reference/data/rest/Shared.Types/Value#Key) and [entities](https://cloud.google.com/datastore/docs/reference/data/rest/Shared.Types/Value#entity)
+## How to work with [keys](https://cloud.google.com/datastore/docs/reference/data/rest/Shared.Types/Value#Key) and [entities](https://cloud.google.com/datastore/docs/reference/data/rest/Shared.Types/Value#entity)
 
 ```python
 from aiodatastore import Key, PartitionId, PathElement
