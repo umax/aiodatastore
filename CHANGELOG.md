@@ -1,4 +1,4 @@
-## 0.1.4 ()
+## 0.1.4 (2023-07-21)
 
 - Add `OR` support to CompositeFilterOperator.
 
