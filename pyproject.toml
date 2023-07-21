@@ -1,6 +1,6 @@
 [project]
 name = "aiodatastore"
-version = "0.1.3"
+version = "0.1.4"
 authors = [
   { name="Max Usachev", email="maxusachev@gmail.com" },
 ]
