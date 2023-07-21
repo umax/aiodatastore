@@ -3,6 +3,7 @@ import enum
 
 class CompositeFilterOperator(enum.Enum):
     AND = "AND"
+    OR = "OR"
     UNSPECIFIED = "OPERATOR_UNSPECIFIED"
 
 

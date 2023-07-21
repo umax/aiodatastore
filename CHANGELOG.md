@@ -1,3 +1,8 @@
+## 0.1.4 ()
+
+- Add `OR` support to CompositeFilterOperator.
+
+
 ## 0.1.3 (2022-12-19)
 
 - Handle datetime value with tzinfo.
