@@ -186,23 +186,23 @@ class TestStringValue(unittest.TestCase):
 class TestIntegerValue(unittest.TestCase):
     def test__raw_to_py(self):
         value = IntegerValue(None, raw_value="123")
-        assert value.raw_to_py() == str(123)
+        assert value.raw_to_py() == 123
 
         value = IntegerValue(None, raw_value="0")
-        assert value.raw_to_py() == str(0)
+        assert value.raw_to_py() == 0
 
         value = IntegerValue(None, raw_value="-123")
-        assert value.raw_to_py() == str(-123)
+        assert value.raw_to_py() == -123
 
     def test__py_to_raw(self):
         value = IntegerValue(123)
-        assert value.py_to_raw() == "123"
+        assert value.py_to_raw() == str(123)
 
         value = IntegerValue(0)
-        assert value.py_to_raw() == "0"
+        assert value.py_to_raw() == str(0)
 
         value = IntegerValue(-123)
-        assert value.py_to_raw() == "-123"
+        assert value.py_to_raw() == str(-123)
 
     def test__to_ds__raw_value(self):
         value = IntegerValue(None, "123")
