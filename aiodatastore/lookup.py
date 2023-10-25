@@ -23,7 +23,7 @@ class LookupResult:
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "LookupResult":
         return cls(
-            found=[EntityResult.from_ds(f) for f in data["found"]],
-            missing=[EntityResult.from_ds(m) for m in data["missing"]],
-            deferred=[Key.from_ds(d) for d in data["deferred"]],
+            found=[EntityResult.from_ds(f) for f in data.get("found", [])],
+            missing=[EntityResult.from_ds(m) for m in data.get("missing", [])],
+            deferred=[Key.from_ds(d) for d in data.get("deferred", [])],
         )
