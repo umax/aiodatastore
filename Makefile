@@ -17,7 +17,7 @@ mypy:
 	mypy aiodatastore
 
 pylint:
-	pylint --disable=C0114,C0115,C0116,R0903,R0913 aiodatastore
+	pylint --disable=C0114,C0115,C0116,R0902,R0903,R0913 aiodatastore
 
 rundatastore:
 	gcloud beta emulators datastore start --no-store-on-disk --project=test --consistency=1.0
