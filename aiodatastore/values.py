@@ -63,6 +63,8 @@ class Value:
 
 
 class NullValue(Value):
+    __slots__ = ("indexed",)
+
     type_name = "nullValue"
 
     def __init__(self, indexed: Optional[bool] = True):
