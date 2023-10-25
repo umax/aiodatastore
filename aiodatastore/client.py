@@ -57,8 +57,8 @@ class Datastore:
     ):
         if transaction_id is not None:
             return {"transaction": transaction_id}
-        else:
-            return {"readConsistency": consistency.value}
+
+        return {"readConsistency": consistency.value}
 
     def _get_partition_id(self):
         return {
