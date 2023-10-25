@@ -19,6 +19,21 @@ class TestEntity(unittest.TestCase):
         assert e.key is None
         assert e.properties == {}
 
+    def test_eq(self):
+        key1 = Key(PartitionId("project1"), [PathElement("kind1")])
+        key2 = Key(PartitionId("project1"), [PathElement("kind1")])
+        key3 = Key(PartitionId("project2"), [PathElement("kind1")])
+        assert Entity(key1, {}) == Entity(key2, {})
+        assert Entity(key1, {}) != Entity(key3, {})
+
+        properties1 = {}
+        properties2 = {"field1": StringValue("str1")}
+        assert Entity(key1, properties1) != Entity(key2, properties2)
+
+        properties1 = {"field1": StringValue("v1")}
+        properties2 = {"field1": StringValue("v1")}
+        assert Entity(key1, properties1) == Entity(key2, properties2)
+
     def test__from_ds__no_key(self):
         e = Entity.from_ds(
             {
