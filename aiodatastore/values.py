@@ -58,6 +58,9 @@ class Value:
             "excludeFromIndexes": not self.indexed,
         }
 
+    def raw_to_py(self):
+        raise NotImplementedError
+
 
 class NullValue(Value):
     type_name = "nullValue"
@@ -127,6 +130,8 @@ class TimestampValue(Value):
         return datetime.fromisoformat(self.raw_value[:26].replace("Z", ""))
 
     def py_to_raw(self):
+        # A timestamp in RFC3339 UTC "Zulu" format, with nanosecond
+        # resolution and up to nine fractional digits.
         return datetime.isoformat(self.py_value)[:26] + "Z"
 
 
@@ -137,7 +142,7 @@ class BlobValue(Value):
         return b64decode(self.raw_value)
 
     def py_to_raw(self):
-        return b64encode(self.py_value.encode()).decode()
+        return b64encode(self.py_value).decode()
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/Shared.Types/ArrayValue
