@@ -45,6 +45,7 @@ class PathElement:
         name: Optional[str] = None,
     ) -> None:
         self.kind = kind
+        # TODO: add validation for int64 value format
         self.id = id
         self.name = name
 
@@ -80,6 +81,7 @@ class Key:
 
     def __init__(self, partition_id: PartitionId, path: List[PathElement]) -> None:
         self.partition_id = partition_id
+        # TODO: add validation for path length (at most 100 elements)
         self.path = path
 
     def __eq__(self, other: Any) -> bool:

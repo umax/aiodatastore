@@ -14,6 +14,20 @@ class TestPartitionId(unittest.TestCase):
         assert p.project_id == "project1"
         assert p.namespace_id == "namespace1"
 
+    def test_eq(self):
+        assert PartitionId("project1") == PartitionId("project1")
+        assert PartitionId("p1", namespace_id="ns1") == PartitionId(
+            "p1", namespace_id="ns1"
+        )
+
+        assert PartitionId("project1") != PartitionId("project2")
+        assert PartitionId("p1", namespace_id="ns1") != PartitionId(
+            "p1", namespace_id="ns2"
+        )
+        assert PartitionId("p1", namespace_id="ns1") != PartitionId(
+            "p2", namespace_id="ns1"
+        )
+
     def test__from_ds(self):
         p = PartitionId.from_ds(
             {
@@ -64,6 +78,17 @@ class TestPathElement(unittest.TestCase):
         assert pe.id is None
         assert pe.name == "name1"
 
+    def test_eq(self):
+        assert PathElement("kind1") == PathElement("kind1")
+        assert PathElement("kind1", id="id1") == PathElement("kind1", id="id1")
+        assert PathElement("kind1", name="name1") == PathElement("kind1", name="name1")
+
+        assert PathElement("kind1") != PathElement("kind2")
+        assert PathElement("kind1", id="id1") != PathElement("kind1", id="id2")
+        assert PathElement("kind1", id="id1") != PathElement("kind2", id="id1")
+        assert PathElement("kind1", name="name1") != PathElement("kind1", name="name2")
+        assert PathElement("kind1", name="name1") != PathElement("kind2", name="name1")
+
     def test__from_ds(self):
         pe = PathElement.from_ds(
             {
@@ -112,10 +137,22 @@ class TestPathElement(unittest.TestCase):
 class TestKey:
     def test__init(self):
         partition = PartitionId("project1", namespace_id="namespace1")
-        path_element = PathElement("kind1", id="id1")
-        key = Key(partition, [path_element])
+        path_el = PathElement("kind1", id="id1")
+        key = Key(partition, [path_el])
         assert key.partition_id == partition
-        assert key.path == [path_element]
+        assert key.path == [path_el]
+
+    def test_eq(self):
+        assert Key(PartitionId("proj1"), []) == Key(PartitionId("proj1"), [])
+        assert Key(PartitionId("proj1"), []) != Key(PartitionId("proj2"), [])
+
+        key1 = Key(PartitionId("proj1"), [PathElement("kind1", id="id1")])
+        key2 = Key(PartitionId("proj1"), [PathElement("kind1", id="id1")])
+        assert key1 == key2
+
+        key1 = Key(PartitionId("proj1"), [PathElement("kind1", id="id1")])
+        key2 = Key(PartitionId("proj1"), [PathElement("kind1", id="id2")])
+        assert key1 != key2
 
     def test__from_ds(self):
         key = Key.from_ds(
