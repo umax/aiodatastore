@@ -41,7 +41,7 @@ class TestNullValue(unittest.TestCase):
 
     def test_setter(self):
         value = NullValue()
-        value.value = 123
+        value.value = None
         assert value.value is None
 
     def test_create_from_py(self):

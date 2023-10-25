@@ -61,28 +61,21 @@ class Value:
     def raw_to_py(self):
         raise NotImplementedError
 
+    def py_to_raw(self):
+        raise NotImplementedError
+
 
 class NullValue(Value):
-    __slots__ = ("indexed",)
-
     type_name = "nullValue"
 
     def __init__(self, indexed: Optional[bool] = True):
-        self.indexed = indexed
+        super().__init__(None, raw_value="NULL_VALUE", indexed=indexed)
 
-    @property
-    def value(self):
+    def raw_to_py(self):
         return None
 
-    @value.setter
-    def value(self, value):
-        pass
-
-    def to_ds(self):
-        return {
-            self.type_name: "NULL_VALUE",
-            "excludeFromIndexes": not self.indexed,
-        }
+    def py_to_raw(self):
+        return "NULL_VALUE"
 
 
 class BooleanValue(Value):
