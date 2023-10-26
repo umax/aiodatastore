@@ -1,3 +1,8 @@
+## 0.1.5 (2023-10-26)
+
+- Safe parsing response body of `lookup` request.
+
+
 ## 0.1.4 (2023-07-21)
 
 - Add `OR` support to CompositeFilterOperator.
