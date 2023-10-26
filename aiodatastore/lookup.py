@@ -7,6 +7,7 @@ __all__ = ("LookupResult",)
 
 
 # https://cloud.google.com/datastore/docs/reference/data/rest/v1/projects/lookup#response-body
+# TODO: add `transaction`, `readTime` fields
 class LookupResult:
     __slots__ = ("found", "missing", "deferred")
 
