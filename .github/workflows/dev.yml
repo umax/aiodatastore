@@ -1,0 +1,66 @@
+name: Development
+
+on:
+  push:
+    branches:
+      - master
+      - "*"
+
+jobs:
+  lint-code:
+    name: "Lint code"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: pip install --no-cache-dir -r requirements.txt
+    - name: black
+      run: make black-check
+    - name: flake8
+      run: make flake8
+    - name: mypy
+      run: make mypy
+
+  test-code-units:
+    name: "Test code (units)"
+    needs: lint-code
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Python dependencies
+      run: pip install --no-cache-dir -r requirements.txt
+    - name: Run tests
+      run: make test-unit
+
+  test-code-integration:
+    name: "Test code (integration)"
+    needs: test-code-units
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        install_components: 'beta,cloud-datastore-emulator'
+    - name: Google Cloud Info
+      run: gcloud info
+    - name: Run datastore emulator
+      run: make rundatastore &
+    - name: Install Python dependencies
+      run: pip install --no-cache-dir -r requirements.txt
+    - name: Run tests
+      run: make test-integration
