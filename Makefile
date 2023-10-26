@@ -1,4 +1,4 @@
-.PHONY: black black-check build flake8 mypy pylint test-integration test-unit
+.PHONY: black black-check build flake8 mypy publish pylint test-integration test-unit
 
 
 black:
@@ -15,6 +15,9 @@ flake8:
 
 mypy:
 	mypy aiodatastore
+
+publish:
+	twine upload dist/*
 
 pylint:
 	pylint --disable=C0114,C0115,C0116,R0902,R0903,R0913 aiodatastore
