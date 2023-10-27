@@ -25,14 +25,14 @@ PROJECT_ID = "test"
 
 def make_entity(props):
     partition_id = PartitionId(PROJECT_ID)
-    path_el = PathElement("TestKind", name=str(uuid.uuid4()))
+    path_el = PathElement("TestEntity", name=str(uuid.uuid4()))
     key = Key(partition_id, [path_el])
     return Entity(key, properties=props)
 
 
 class TestNullValue:
     @pytest.mark.asyncio
-    async def test_ok(self):
+    async def test__create(self):
         entity = make_entity({"null-value": NullValue()})
         async with Datastore(project_id=PROJECT_ID) as ds:
             await ds.insert(entity)
@@ -43,7 +43,7 @@ class TestNullValue:
 
 class TestBooleanValue:
     @pytest.mark.asyncio
-    async def test_ok(self):
+    async def test__create(self):
         entity1 = make_entity({"true-value": BooleanValue(True)})
         entity2 = make_entity({"false-value": BooleanValue(False)})
         async with Datastore(project_id=PROJECT_ID) as ds:
@@ -56,7 +56,7 @@ class TestBooleanValue:
 
 class TestStringValue:
     @pytest.mark.asyncio
-    async def test_ok(self):
+    async def test__create(self):
         entity1 = make_entity({"empty-string": StringValue("")})
         entity2 = make_entity({"some-string": StringValue("str1")})
         async with Datastore(project_id=PROJECT_ID) as ds:
@@ -69,7 +69,7 @@ class TestStringValue:
 
 class TestIntegerValue:
     @pytest.mark.asyncio
-    async def test_ok(self):
+    async def test__create(self):
         entity1 = make_entity({"negative-int": IntegerValue(-123)})
         entity2 = make_entity({"zero-int": IntegerValue(0)})
         entity3 = make_entity({"positive-int": IntegerValue(123)})
@@ -84,7 +84,7 @@ class TestIntegerValue:
 
 class TestDoubleValue:
     @pytest.mark.asyncio
-    async def test_create_ok(self):
+    async def test__create(self):
         entity1 = make_entity({"negative-double": DoubleValue(-1.23)})
         entity2 = make_entity({"zero-double": DoubleValue(0.0)})
         entity3 = make_entity({"positive-double": DoubleValue(1.23)})
@@ -99,7 +99,7 @@ class TestDoubleValue:
 
 class TestTimestampValue:
     @pytest.mark.asyncio
-    async def test_create_ok(self):
+    async def test__create(self):
         entity = make_entity(
             {"datetime-value": TimestampValue(datetime.datetime.utcnow())}
         )
@@ -112,7 +112,7 @@ class TestTimestampValue:
 
 class TestBlobValue:
     @pytest.mark.asyncio
-    async def test_create_ok(self):
+    async def test__create(self):
         entity = make_entity({"blob-value": BlobValue(b"data")})
         async with Datastore(project_id=PROJECT_ID) as ds:
             await ds.insert(entity)
@@ -123,7 +123,7 @@ class TestBlobValue:
 
 class TestArrayValue:
     @pytest.mark.asyncio
-    async def test_create_ok(self):
+    async def test__create(self):
         entity = make_entity(
             {
                 "array-value": ArrayValue(
@@ -148,7 +148,7 @@ class TestArrayValue:
 
 class TestGeoPointValue:
     @pytest.mark.asyncio
-    async def test_create_ok(self):
+    async def test__create(self):
         entity = make_entity({"geo-value": GeoPointValue(LatLng(1.23, 4.56))})
         async with Datastore(project_id=PROJECT_ID) as ds:
             await ds.insert(entity)

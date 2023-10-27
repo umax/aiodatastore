@@ -191,10 +191,12 @@ class Datastore:
         mutation = UpsertMutation(entity)
         return await self.commit([mutation])
 
+    # TODO: handle entity not found
     async def update(self, entity: Entity) -> CommitResult:
         mutation = UpdateMutation(entity)
         return await self.commit([mutation])
 
+    # TODO: handle entity not found
     async def delete(self, obj: Union[Entity, Key]) -> CommitResult:
         key = obj.key if isinstance(obj, Entity) else obj
         mutation = DeleteMutation(key)  # type: ignore
