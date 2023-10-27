@@ -26,3 +26,24 @@ class TestClient:
 
             assert len(result.found) == 1
             assert result.found[0].entity == entity1
+
+    @pytest.mark.asyncio
+    async def test__insert(self):
+        key = Key(
+            PartitionId(PROJECT_ID),
+            [PathElement("TestKind", name=str(uuid.uuid4()))],
+        )
+
+        async with Datastore(project_id=PROJECT_ID) as ds:
+            result = await ds.lookup([key])
+            assert result.found == []
+            assert len(result.missing) == 1
+            assert result.missing[0].entity.key == key
+
+            entity = Entity(key, properties={})
+            await ds.insert(entity)
+
+            result = await ds.lookup([key])
+            assert result.missing == []
+            assert len(result.found) == 1
+            assert result.found[0].entity == entity
