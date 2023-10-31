@@ -22,6 +22,16 @@ class TestClient:
             assert keys[1].path[0].id is not None
 
     @pytest.mark.asyncio
+    async def test__reserve_ids(self):
+        partition_id = PartitionId(PROJECT_ID)
+        key1 = Key(partition_id, [PathElement("TestEntity", id="100")])
+        key2 = Key(partition_id, [PathElement("TestEntity", id="101")])
+
+        async with Datastore(project_id=PROJECT_ID) as ds:
+            result = await ds.reserve_ids([key1, key2])
+            assert result is None
+
+    @pytest.mark.asyncio
     async def test__lookup(self):
         partition_id = PartitionId(PROJECT_ID)
         key1 = Key(partition_id, [PathElement("TestEntity", name=str(uuid.uuid4()))])
