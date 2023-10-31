@@ -1,7 +1,19 @@
 import uuid
 
 import pytest
-from aiodatastore import Datastore, Entity, Key, PartitionId, PathElement, StringValue
+from aiodatastore import (
+    Datastore,
+    Entity,
+    Key,
+    KindExpression,
+    PartitionId,
+    PathElement,
+    PropertyFilter,
+    PropertyFilterOperator,
+    PropertyReference,
+    Query,
+    StringValue,
+)
 
 PROJECT_ID = "test"
 
@@ -144,7 +156,7 @@ class TestClient:
         async with Datastore(project_id=PROJECT_ID) as ds:
             # create an entity
             entity = Entity(key, properties={"str-value": StringValue("str1")})
-            result = await ds.insert(entity)
+            await ds.insert(entity)
 
             # check created ok
             result = await ds.lookup([key])
@@ -173,7 +185,7 @@ class TestClient:
         async with Datastore(project_id=PROJECT_ID) as ds:
             # create an entity
             entity = Entity(key, properties={})
-            result = await ds.insert(entity)
+            await ds.insert(entity)
 
             # check created ok
             result = await ds.lookup([key])
@@ -189,3 +201,42 @@ class TestClient:
             assert result.found == []
             assert len(result.missing) == 1
             assert result.missing[0].entity.key == key
+
+    @pytest.mark.asyncio
+    async def test__run_query__entity_not_found(self):
+        query = Query(kind=KindExpression("SomeNotExistingEntity"))
+
+        async with Datastore(project_id=PROJECT_ID) as ds:
+            result = await ds.run_query(query)
+            assert result.entity_results == []
+
+    @pytest.mark.asyncio
+    async def test__run_query__entity_found(self):
+        key = Key(
+            PartitionId(PROJECT_ID),
+            [PathElement("TestEntity", name=str(uuid.uuid4()))],
+        )
+
+        async with Datastore(project_id=PROJECT_ID) as ds:
+            # create an entity
+            value = str(uuid.uuid4())
+            entity = Entity(key, properties={"str-value": StringValue(value)})
+            await ds.insert(entity)
+
+            # check created ok
+            result = await ds.lookup([key])
+            assert result.missing == []
+            assert len(result.found) == 1
+            assert result.found[0].entity == entity
+
+            query1 = Query(
+                kind=KindExpression("TestEntity"),
+                filter=PropertyFilter(
+                    property=PropertyReference("str-value"),
+                    op=PropertyFilterOperator.EQUAL,
+                    value=StringValue(value),
+                ),
+            )
+            result = await ds.run_query(query1)
+            assert len(result.entity_results) == 1
+            assert result.entity_results[0].entity == entity
