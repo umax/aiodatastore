@@ -8,6 +8,20 @@ PROJECT_ID = "test"
 
 class TestClient:
     @pytest.mark.asyncio
+    async def test__allocate_ids(self):
+        partition_id = PartitionId(PROJECT_ID)
+        key1 = Key(partition_id, [PathElement("TestEntity")])
+        assert key1.path[0].id is None
+        key2 = Key(partition_id, [PathElement("TestEntity")])
+        assert key2.path[0].id is None
+
+        async with Datastore(project_id=PROJECT_ID) as ds:
+            keys = await ds.allocate_ids([key1, key2])
+            assert len(keys) == 2
+            assert keys[0].path[0].id is not None
+            assert keys[1].path[0].id is not None
+
+    @pytest.mark.asyncio
     async def test__lookup(self):
         partition_id = PartitionId(PROJECT_ID)
         key1 = Key(partition_id, [PathElement("TestEntity", name=str(uuid.uuid4()))])
