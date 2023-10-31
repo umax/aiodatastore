@@ -78,6 +78,7 @@ class EntityResult:
         )
 
     @classmethod
+    # TODO: parse `createTime` and `updateTime` from response
     def from_ds(cls, data: Dict[str, Any]) -> "EntityResult":
         return cls(
             Entity.from_ds(data["entity"]),
