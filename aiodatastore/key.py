@@ -43,11 +43,22 @@ class PathElement:
         kind: str,
         id: Optional[str] = None,
         name: Optional[str] = None,
+        validate_id: bool = True,
     ) -> None:
         self.kind = kind
-        # TODO: add validation for int64 value format
         self.id = id
         self.name = name
+
+        if validate_id and self.id:
+            self._validate_id()
+
+    def _validate_id(self):
+        try:
+            int(self.id)
+        except ValueError:
+            raise ValueError(
+                f"id value of PathElement should follow int64 format: {self.id}"
+            )
 
     def __eq__(self, other: Any) -> bool:
         return (
@@ -63,6 +74,7 @@ class PathElement:
             kind=data["kind"],
             id=data.get("id"),
             name=data.get("name"),
+            validate_id=False,
         )
 
     def to_ds(self) -> Dict[str, str]:

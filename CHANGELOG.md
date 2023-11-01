@@ -1,3 +1,8 @@
+## 0.2.0 ()
+
+- Add validation for `id` field of PathElement.
+
+
 ## 0.1.5 (2023-10-26)
 
 - Safe parsing response body of `lookup` request.

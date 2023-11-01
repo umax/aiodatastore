@@ -68,9 +68,9 @@ class TestPathElement(unittest.TestCase):
         assert pe.name is None
 
     def test__init__custom_params(self):
-        pe = PathElement("kind1", id="id1")
+        pe = PathElement("kind1", id="123")
         assert pe.kind == "kind1"
-        assert pe.id == "id1"
+        assert pe.id == "123"
         assert pe.name is None
 
         pe = PathElement("kind1", name="name1")
@@ -78,14 +78,18 @@ class TestPathElement(unittest.TestCase):
         assert pe.id is None
         assert pe.name == "name1"
 
+    def test__init__invalid_id(self):
+        with self.assertRaises(ValueError):
+            PathElement("kind1", id="id1")
+
     def test_eq(self):
         assert PathElement("kind1") == PathElement("kind1")
-        assert PathElement("kind1", id="id1") == PathElement("kind1", id="id1")
+        assert PathElement("kind1", id="123") == PathElement("kind1", id="123")
         assert PathElement("kind1", name="name1") == PathElement("kind1", name="name1")
 
         assert PathElement("kind1") != PathElement("kind2")
-        assert PathElement("kind1", id="id1") != PathElement("kind1", id="id2")
-        assert PathElement("kind1", id="id1") != PathElement("kind2", id="id1")
+        assert PathElement("kind1", id="111") != PathElement("kind1", id="222")
+        assert PathElement("kind1", id="123") != PathElement("kind2", id="123")
         assert PathElement("kind1", name="name1") != PathElement("kind1", name="name2")
         assert PathElement("kind1", name="name1") != PathElement("kind2", name="name1")
 
@@ -121,10 +125,10 @@ class TestPathElement(unittest.TestCase):
         assert pe.name == "name1"
 
     def test__to_ds(self):
-        pe = PathElement("kind1", id="id1")
+        pe = PathElement("kind1", id="123")
         assert pe.to_ds() == {
             "kind": "kind1",
-            "id": "id1",
+            "id": "123",
         }
 
         pe = PathElement("kind1", name="name1")
@@ -134,10 +138,10 @@ class TestPathElement(unittest.TestCase):
         }
 
 
-class TestKey:
+class TestKey(unittest.TestCase):
     def test__init(self):
         partition = PartitionId("project1", namespace_id="namespace1")
-        path_el = PathElement("kind1", id="id1")
+        path_el = PathElement("kind1", id="123")
         key = Key(partition, [path_el])
         assert key.partition_id == partition
         assert key.path == [path_el]
@@ -146,12 +150,12 @@ class TestKey:
         assert Key(PartitionId("proj1"), []) == Key(PartitionId("proj1"), [])
         assert Key(PartitionId("proj1"), []) != Key(PartitionId("proj2"), [])
 
-        key1 = Key(PartitionId("proj1"), [PathElement("kind1", id="id1")])
-        key2 = Key(PartitionId("proj1"), [PathElement("kind1", id="id1")])
+        key1 = Key(PartitionId("proj1"), [PathElement("kind1", id="100")])
+        key2 = Key(PartitionId("proj1"), [PathElement("kind1", id="100")])
         assert key1 == key2
 
-        key1 = Key(PartitionId("proj1"), [PathElement("kind1", id="id1")])
-        key2 = Key(PartitionId("proj1"), [PathElement("kind1", id="id2")])
+        key1 = Key(PartitionId("proj1"), [PathElement("kind1", id="100")])
+        key2 = Key(PartitionId("proj1"), [PathElement("kind1", id="101")])
         assert key1 != key2
 
     def test__from_ds(self):
@@ -163,7 +167,7 @@ class TestKey:
                 "path": [
                     {
                         "kind": "kind1",
-                        "id": "id1",
+                        "id": "123",
                     },
                 ],
             }
@@ -179,12 +183,12 @@ class TestKey:
         assert isinstance(path, list)
         assert len(path) == 1
         assert path[0].kind == "kind1"
-        assert path[0].id == "id1"
+        assert path[0].id == "123"
 
     def test__to_ds(self):
         partition = PartitionId("project1", namespace_id="namespace1")
         path = [
-            PathElement("kind1", id="id1"),
+            PathElement("kind1", id="123"),
             PathElement("kind2", name="name2"),
         ]
         key = Key(partition, path)
@@ -196,7 +200,7 @@ class TestKey:
             "path": [
                 {
                     "kind": "kind1",
-                    "id": "id1",
+                    "id": "123",
                 },
                 {
                     "kind": "kind2",
