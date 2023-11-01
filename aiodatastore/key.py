@@ -52,14 +52,6 @@ class PathElement:
         if validate_id and self.id:
             self._validate_id()
 
-    def _validate_id(self):
-        try:
-            int(self.id)
-        except ValueError:
-            raise ValueError(
-                f"id value of PathElement should follow int64 format: {self.id}"
-            )
-
     def __eq__(self, other: Any) -> bool:
         return (
             isinstance(other, PathElement)
@@ -67,6 +59,14 @@ class PathElement:
             and self.id == other.id
             and self.name == other.name
         )
+
+    def _validate_id(self):
+        try:
+            int(self.id)
+        except ValueError:
+            raise ValueError(
+                f"`id` value of PathElement should follow int64 format: {self.id}"
+            )
 
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "PathElement":
@@ -91,10 +91,17 @@ class PathElement:
 class Key:
     __slots__ = ("partition_id", "path")
 
-    def __init__(self, partition_id: PartitionId, path: List[PathElement]) -> None:
+    def __init__(
+        self,
+        partition_id: PartitionId,
+        path: List[PathElement],
+        validate_path: bool = True,
+    ) -> None:
         self.partition_id = partition_id
-        # TODO: add validation for path length (at most 100 elements)
         self.path = path
+
+        if validate_path:
+            self._validate_path()
 
     def __eq__(self, other: Any) -> bool:
         return (
@@ -103,11 +110,19 @@ class Key:
             and self.path == other.path
         )
 
+    def _validate_path(self):
+        if not self.path:
+            raise ValueError("`path` value of Key can never be empty")
+
+        if len(self.path) > 100:
+            raise ValueError("`path` value of Key can have at most 100 elements")
+
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "Key":
         return cls(
             partition_id=PartitionId.from_ds(data["partitionId"]),
             path=[PathElement.from_ds(path) for path in data["path"]],
+            validate_path=False,
         )
 
     def to_ds(self) -> Dict[str, Any]:

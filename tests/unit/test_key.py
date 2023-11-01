@@ -141,22 +141,36 @@ class TestPathElement(unittest.TestCase):
 class TestKey(unittest.TestCase):
     def test__init(self):
         partition = PartitionId("project1", namespace_id="namespace1")
-        path_el = PathElement("kind1", id="123")
-        key = Key(partition, [path_el])
+        path = [PathElement("kind1", id="123")]
+        key = Key(partition, path)
         assert key.partition_id == partition
-        assert key.path == [path_el]
+        assert key.path == path
+
+    def test__init__empty_path(self):
+        partition = PartitionId("project1", namespace_id="namespace1")
+        path = []
+        with self.assertRaises(ValueError):
+            Key(partition, path)
+
+    def test__init__path_too_long(self):
+        partition = PartitionId("project1", namespace_id="namespace1")
+        path = [PathElement("kind1", id=str(_id)) for _id in range(101)]
+        with self.assertRaises(ValueError):
+            Key(partition, path)
 
     def test_eq(self):
-        assert Key(PartitionId("proj1"), []) == Key(PartitionId("proj1"), [])
-        assert Key(PartitionId("proj1"), []) != Key(PartitionId("proj2"), [])
-
-        key1 = Key(PartitionId("proj1"), [PathElement("kind1", id="100")])
-        key2 = Key(PartitionId("proj1"), [PathElement("kind1", id="100")])
+        key1 = Key(PartitionId("proj1"), [PathElement("kind1", id="123")])
+        key2 = Key(PartitionId("proj1"), [PathElement("kind1", id="123")])
         assert key1 == key2
 
-        key1 = Key(PartitionId("proj1"), [PathElement("kind1", id="100")])
-        key2 = Key(PartitionId("proj1"), [PathElement("kind1", id="101")])
-        assert key1 != key2
+        key = Key(PartitionId("proj2"), [PathElement("kind1", id="123")])
+        assert key1 != key
+
+        key = Key(PartitionId("proj1"), [PathElement("kind2", id="123")])
+        assert key1 != key
+
+        key = Key(PartitionId("proj1"), [PathElement("kind1", id="321")])
+        assert key1 != key
 
     def test__from_ds(self):
         key = Key.from_ds(
