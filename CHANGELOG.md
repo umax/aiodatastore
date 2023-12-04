@@ -1,5 +1,6 @@
 ## 0.2.0 ()
 
+- Use Python descriptors to access entity properties.
 - Add validation for `id` field of PathElement.
 - Add validation for `path` field of Key.
 

@@ -19,6 +19,25 @@ class TestEntity(unittest.TestCase):
         assert e.key is None
         assert e.properties == {}
 
+    def test__getitem__(self):
+        entity = Entity(None, {"field1": StringValue("str1")})
+        assert entity["field1"] == entity.properties["field1"]
+
+        with self.assertRaises(KeyError):
+            entity["some-key123"]
+
+    def test__setitem__(self):
+        entity = Entity(None, {})
+        entity["field2"] = StringValue("str2")
+        assert entity["field2"] == entity.properties["field2"]
+
+    def test__delitem__(self):
+        entity = Entity(None, {"field3": StringValue("str3")})
+        assert len(entity.properties) == 1
+        del entity["field3"]
+        assert len(entity.properties) == 0
+        assert "field3" not in entity.properties
+
     def test_eq(self):
         key1 = Key(PartitionId("project1"), [PathElement("kind1")])
         key2 = Key(PartitionId("project1"), [PathElement("kind1")])

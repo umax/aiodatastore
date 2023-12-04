@@ -24,6 +24,15 @@ class Entity:
             and self.properties == other.properties
         )
 
+    def __getitem__(self, key):
+        return self.properties[key]
+
+    def __setitem__(self, key, value):
+        self.properties[key] = value
+
+    def __delitem__(self, key):
+        del self.properties[key]
+
     @classmethod
     def from_ds(cls, data: Dict[str, Any]) -> "Entity":
         properties = {}
