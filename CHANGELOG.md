@@ -1,4 +1,4 @@
-## 0.2.0 ()
+## 0.2.0 (2023-12-04)
 
 - Use Python descriptors to access entity properties.
 - Add validation for `id` field of PathElement.
