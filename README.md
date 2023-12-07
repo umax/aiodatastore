@@ -95,31 +95,31 @@ entity = Entity(key, properties={
 
 To access property value use `.value` attribute:
 ```python
-print(entity.properties["integer-prop"].value)
+print(entity["integer-prop"].value)
 123
 ```
 
 Use `.value` attribute to change property value and keep index status. Or assign new value and set index:
 ```python
-print(entity.properties["integer-prop"].value, entity.properties["integer-prop"].indexed)
+print(entity["integer-prop"].value, entity["integer-prop"].indexed)
 123, True
-entity.properties["integer-prop"].value = 456
-print(entity.properties["integer-prop"].value, entity.properties["integer-prop"].indexed)
+entity["integer-prop"].value = 456
+print(entity["integer-prop"].value, entity["integer-prop"].indexed)
 456, True
 
-entity.properties["integer-prop"] = IntegerValue(456, indexed=True)
-print(entity.properties["integer-prop"].value, entity.properties["integer-prop"].indexed)
-456, True
+entity["integer-prop"] = IntegerValue(789, indexed=False)
+print(entity["integer-prop"].value, entity["integer-prop"].indexed)
+789, False
 ```
 
 Use `.indexed` attribute to access or change index:
 ```python
-print(entity.properties["integer-prop"].indexed)
-True
-
-entity.properties["integer-prop"].indexed = False
-print(entity.properties["integer-prop"].indexed)
+print(entity["integer-prop"].indexed)
 False
+
+entity["integer-prop"].indexed = True
+print(entity["integer-prop"].indexed)
+True
 ```
 
 To insert new entity (the entity key's final path element may be incomplete):
@@ -133,7 +133,7 @@ await client.insert(entity)
 
 To update an entity (the entity must already exist. Must have a complete key path):
 ```python
-entity.properties["string-prop"] = StringValue("new value")
+entity["string-prop"] = StringValue("new value")
 await client.update(entity)
 ```
 
